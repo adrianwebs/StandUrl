@@ -1,49 +1,53 @@
-version: '3.9'
-
-# ── StandUrl API + Redis (Producción) ─────────────────────────────────────────
-# Ubicación en servidor: /docker/clientes/standurl/api/docker-compose.prod.yml
-# Se conecta a la red externa 'proxy' donde ya corre Traefik
+name: standurl-api
 
 services:
   api:
-    image: ${API_IMAGE:-ghcr.io/adrianwebs/standurl-api:latest}
+    image: ghcr.io/adrianwebs/standurl-api:latest
     container_name: standurl-api
     restart: unless-stopped
+
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION:-Server=51.195.47.36;initial catalog=StandUrlProd;persist security info=True;user id=sa;password=0D'1YQgpFHmYCQ!`ibHY;multipleactiveresultsets=True;application name=EntityFramework;Encrypt=false;}
-      - Redis__ConnectionString=standurl-redis:6379
-      - Jwt__Secret=${JWT_SECRET}
-      - Cors__AllowedOrigins__0=https://${DOMAIN:-standurl.webadir.es}
-      - Cors__AllowedOrigins__1=https://standurl.webadir.es
-      - Cors__AllowedOrigins__2=https://standurl.com
-      - Cors__AllowedOrigins__3=https://www.standurl.com
-      - Smtp__Host=${SMTP_HOST:-ssl0.ovh.net}
-      - Smtp__Port=${SMTP_PORT:-465}
-      - Smtp__UseSsl=${SMTP_USE_SSL:-true}
-      - Smtp__User=${SMTP_USER}
-      - Smtp__Password=${SMTP_PASSWORD}
-      - Smtp__FromEmail=${SMTP_FROM_EMAIL:-adrian@webadir.es}
-      - Smtp__FromName=${SMTP_FROM_NAME:-StandUrl}
-      - Smtp__NotificationEmail=${NOTIFICATION_EMAIL:-dev@standurl.com}
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: 8080
+      TZ: Europe/Madrid
+
+      ConnectionStrings__DefaultConnection: ${DEFAULT_CONNECTION:-Server=51.195.47.36;initial catalog=StandUrlProd;persist security info=True;user id=sa;password=0D'1YQgpFHmYCQ!`ibHY;multipleactiveresultsets=True;application name=EntityFramework;Encrypt=false;}
+      Redis__ConnectionString: standurl-redis:6379
+      Jwt__Secret: ${JWT_SECRET}
+      Cors__AllowedOrigins__0: https://${DOMAIN:-standurl.webadir.es}
+      Cors__AllowedOrigins__1: https://standurl.webadir.es
+      Cors__AllowedOrigins__2: https://standurl.com
+
+      Smtp__Host: ${SMTP_HOST:-ssl0.ovh.net}
+      Smtp__Port: 465
+      Smtp__UseSsl: "true"
+      Smtp__User: ${SMTP_USER}
+      Smtp__Password: ${SMTP_PASSWORD}
+      Smtp__FromEmail: ${SMTP_FROM_EMAIL:-adrian@webadir.es}
+      Smtp__FromName: ${SMTP_FROM_NAME:-StandUrl}
+      Smtp__NotificationEmail: ${NOTIFICATION_EMAIL:-dev@standurl.com}
+
+    networks:
+      - proxy
+      - standurl-api-internal
+
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      # Router HTTPS (compatible con entrypoint 'websecure' o 'https')
-      - "traefik.http.routers.standurl-api-secure.rule=Host(`${API_DOMAIN:-apistandurl.webadir.es}`)"
-      - "traefik.http.routers.standurl-api-secure.entrypoints=websecure,https"
-      - "traefik.http.routers.standurl-api-secure.tls=true"
-      - "traefik.http.routers.standurl-api-secure.tls.certresolver=${CERT_RESOLVER:-letsencrypt}"
-      - "traefik.http.routers.standurl-api-secure.service=standurl-api-svc"
-      # Router HTTP (compatible con entrypoint 'web' o 'http')
-      - "traefik.http.routers.standurl-api-http.rule=Host(`${API_DOMAIN:-apistandurl.webadir.es}`)"
-      - "traefik.http.routers.standurl-api-http.entrypoints=web,http"
-      - "traefik.http.routers.standurl-api-http.service=standurl-api-svc"
-      # Definición explícita del servicio al puerto 8080
-      - "traefik.http.services.standurl-api-svc.loadbalancer.server.port=8080"
-    networks:
-      - proxy
-      - standurl-api-net
+
+      - "traefik.http.routers.standurl-api.rule=Host(`apistandurl.webadir.es`) || Host(`api.standurl.com`)"
+      - "traefik.http.routers.standurl-api.entrypoints=websecure"
+      - "traefik.http.routers.standurl-api.tls=true"
+      - "traefik.http.routers.standurl-api.tls.certresolver=letsencrypt"
+
+      - "traefik.http.services.standurl-api.loadbalancer.server.port=8080"
+
+      - "traefik.http.middlewares.standurl-api-security.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.standurl-api-security.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.standurl-api-security.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.standurl-api-security.headers.browserXssFilter=true"
+      - "traefik.http.routers.standurl-api.middlewares=standurl-api-security@docker"
+
     depends_on:
       - redis
 
@@ -55,7 +59,7 @@ services:
     volumes:
       - redis-data:/data
     networks:
-      - standurl-api-net
+      - standurl-api-internal
 
 volumes:
   redis-data:
@@ -63,5 +67,6 @@ volumes:
 networks:
   proxy:
     external: true
-  standurl-api-net:
+    name: proxy
+  standurl-api-internal:
     driver: bridge

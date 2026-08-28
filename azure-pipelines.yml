@@ -1,0 +1,122 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - apps/api/**
+      - azure-pipelines.yml
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - apps/api/**
+      - azure-pipelines.yml
+
+variables:
+  dotnetVersion: '9.0.x'
+  imageRepository: 'adrianwebs/standurl-api'
+  imageName: 'ghcr.io/adrianwebs/standurl-api'
+  dockerRegistryServiceConnection: 'ghcr-standurl'
+  sshServiceConnection: 'standurl-vps'
+
+stages:
+  # ── 1. CI Stage: Build & Tests (se ejecuta en PRs y en push a main) ─────────
+  - stage: CI
+    displayName: CI
+    jobs:
+      - job: BuildAndTest
+        displayName: Build and test
+        pool:
+          vmImage: ubuntu-latest
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UseDotNet@2
+            displayName: Install .NET 9 SDK
+            inputs:
+              packageType: sdk
+              version: $(dotnetVersion)
+
+          - script: dotnet restore apps/api/StandUrl.Api/StandUrl.Api.csproj
+            displayName: Restore API dependencies
+
+          - script: dotnet restore apps/api/StandUrl.Api.Tests/StandUrl.Api.Tests.csproj
+            displayName: Restore Test dependencies
+
+          - script: dotnet build apps/api/StandUrl.Api/StandUrl.Api.csproj --configuration Release --no-restore
+            displayName: Build API project
+
+          - script: dotnet test apps/api/StandUrl.Api.Tests/StandUrl.Api.Tests.csproj --configuration Release --no-restore
+            displayName: Run Unit Tests
+
+  # ── 2. Docker Stage: Build & Push a GHCR (solo en main) ─────────────────────
+  - stage: Docker
+    displayName: Build and publish Docker image
+    dependsOn: CI
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: BuildAndPush
+        displayName: Build and push image
+        pool:
+          vmImage: ubuntu-latest
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: Docker@2
+            displayName: Build and push Docker image
+            inputs:
+              command: buildAndPush
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(imageRepository)
+              Dockerfile: apps/api/Dockerfile
+              buildContext: apps/api
+              addPipelineData: false
+              addBaseImageData: false
+              tags: |
+                latest
+                $(Build.SourceVersion)
+            env:
+              DOCKER_BUILDKIT: 0
+
+  # ── 3. Deploy Stage: SSH al VPS (solo en main) ──────────────────────────────
+  - stage: Deploy
+    displayName: Deploy production
+    dependsOn: Docker
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: DeployToVps
+        displayName: Deploy StandUrl API to VPS
+        environment: standurl-production
+        pool:
+          vmImage: ubuntu-latest
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+                - task: SSH@0
+                  displayName: Pull and restart StandUrl API
+                  inputs:
+                    sshEndpoint: $(sshServiceConnection)
+                    runOptions: inline
+                    inline: |
+                      set -eu
+
+                      cd /docker/clientes/standurl/api
+
+                      docker compose pull --quiet api
+                      docker compose up -d --remove-orphans api
+
+                      docker image prune -af --filter "until=168h"
+                    failOnStdErr: false
+                    readyTimeout: '20000'
