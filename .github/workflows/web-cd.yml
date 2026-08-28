@@ -26,15 +26,14 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/standurl-web
 
-defaults:
-  run:
-    working-directory: apps/web
-
 jobs:
   # ── 1. CI rápido antes de desplegar ─────────────────────────────────────────
   ci:
     name: Lint & Build check
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
 
@@ -133,6 +132,7 @@ jobs:
             docker image prune -f
 
       - name: Smoke test
+        working-directory: .
         run: |
           sleep 10
           curl -f https://standurl.webadir.es/ || curl -f https://standurl.com/ || exit 1
