@@ -29,11 +29,18 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.standurl-api.rule=Host(`${API_DOMAIN:-apistandurl.webadir.es}`)"
-      - "traefik.http.routers.standurl-api.entrypoints=websecure"
-      - "traefik.http.routers.standurl-api.tls=true"
-      - "traefik.http.routers.standurl-api.tls.certresolver=${CERT_RESOLVER:-letsencrypt}"
-      - "traefik.http.services.standurl-api.loadbalancer.server.port=8080"
+      # Router HTTPS (compatible con entrypoint 'websecure' o 'https')
+      - "traefik.http.routers.standurl-api-secure.rule=Host(`${API_DOMAIN:-apistandurl.webadir.es}`)"
+      - "traefik.http.routers.standurl-api-secure.entrypoints=websecure,https"
+      - "traefik.http.routers.standurl-api-secure.tls=true"
+      - "traefik.http.routers.standurl-api-secure.tls.certresolver=${CERT_RESOLVER:-letsencrypt}"
+      - "traefik.http.routers.standurl-api-secure.service=standurl-api-svc"
+      # Router HTTP (compatible con entrypoint 'web' o 'http')
+      - "traefik.http.routers.standurl-api-http.rule=Host(`${API_DOMAIN:-apistandurl.webadir.es}`)"
+      - "traefik.http.routers.standurl-api-http.entrypoints=web,http"
+      - "traefik.http.routers.standurl-api-http.service=standurl-api-svc"
+      # Definición explícita del servicio al puerto 8080
+      - "traefik.http.services.standurl-api-svc.loadbalancer.server.port=8080"
     networks:
       - proxy
       - standurl-api-net
