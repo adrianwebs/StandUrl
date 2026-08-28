@@ -135,4 +135,4 @@ jobs:
         working-directory: .
         run: |
           sleep 10
-          curl -f https://standurl.webadir.es/ || curl -f https://standurl.com/ || exit 1
+          curl -f --retry 3 --retry-delay 5 https://standurl.webadir.es/ || curl -k -f https://standurl.webadir.es/ || exit 1
