@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { adminApi, type BusinessSummary, type DeviceSummary, type CreateDevicePayload } from '@/lib/adminApi'
 import { AdminShell } from '../../_components/AdminShell'
+import { DeviceQrModal } from '@/components/DeviceQrModal'
+import { QrCode, ExternalLink } from 'lucide-react'
 
 const MODEL_TYPES = ['generico', 'pesa', 'tijeras', 'taza', 'plato']
 
@@ -47,7 +49,15 @@ function CreateDeviceModal({ businessId, onClose, onCreated }: { businessId: str
   )
 }
 
-function DeviceRow({ device, onUpdate }: { device: DeviceSummary; onUpdate: (d: DeviceSummary) => void }) {
+function DeviceRow({
+  device,
+  onUpdate,
+  onViewQr,
+}: {
+  device: DeviceSummary
+  onUpdate: (d: DeviceSummary) => void
+  onViewQr: (d: DeviceSummary) => void
+}) {
   const { token } = useAuth()
   const [editing, setEditing] = useState(false)
   const [url, setUrl] = useState(device.destinationUrl)
@@ -67,8 +77,15 @@ function DeviceRow({ device, onUpdate }: { device: DeviceSummary; onUpdate: (d: 
 
   return (
     <tr className='border-b border-[#1A1A1A] hover:bg-[#1A1A1A] transition-colors'>
-      <td className='px-5 py-3.5'><p className='font-medium text-[#FAFAFA] text-sm'>{device.label}</p><p className='text-xs text-[#555]'>{device.modelType}</p></td>
-      <td className='px-4 py-3.5'><code className='text-xs bg-[#1A1A1A] border border-[#222] px-2 py-1 rounded text-[#F5A623] font-mono'>{device.token}</code></td>
+      <td className='px-5 py-3.5'>
+        <p className='font-medium text-[#FAFAFA] text-sm'>{device.label}</p>
+        <p className='text-xs text-[#555]'>{device.modelType}</p>
+      </td>
+      <td className='px-4 py-3.5'>
+        <code className='text-xs bg-[#1A1A1A] border border-[#222] px-2 py-1 rounded text-[#F5A623] font-mono'>
+          {device.token}
+        </code>
+      </td>
       <td className='px-4 py-3.5 max-w-xs'>
         {editing ? (
           <div className='flex gap-2'>
@@ -86,7 +103,27 @@ function DeviceRow({ device, onUpdate }: { device: DeviceSummary; onUpdate: (d: 
       <td className='px-4 py-3.5 text-center text-[#888] text-sm'>{(device.interactionCount ?? 0).toLocaleString()}</td>
       <td className='px-4 py-3.5 text-center text-xs text-[#555]'>{device.lastScan ? new Date(device.lastScan).toLocaleDateString('es-ES') : '--'}</td>
       <td className='px-4 py-3.5 text-center'><button onClick={toggleStatus}><span className={device.status === 'active' ? 'inline-block w-2.5 h-2.5 rounded-full bg-green-500' : 'inline-block w-2.5 h-2.5 rounded-full bg-red-500'} /></button></td>
-      <td className='px-4 py-3.5 text-right'><a href={'/t/' + device.token + '?src=qr'} target='_blank' rel='noopener noreferrer' className='text-xs text-[#555] hover:text-[#F5A623]'>Probar</a></td>
+      <td className='px-4 py-3.5 text-right'>
+        <div className='flex items-center justify-end gap-2'>
+          <button
+            onClick={() => onViewQr(device)}
+            className='inline-flex items-center gap-1 text-xs bg-[#1A1A1A] hover:bg-[#252525] border border-[#333] hover:border-[#F5A623]/50 text-[#FAFAFA] hover:text-[#F5A623] px-2.5 py-1 rounded-lg transition-colors font-medium'
+            title='Ver QR y descargar vector SVG para modelado 3D'
+          >
+            <QrCode size={13} className='text-[#F5A623]' />
+            <span>QR / SVG</span>
+          </button>
+          <a
+            href={'/t/' + device.token + '?src=qr'}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-xs text-[#555] hover:text-[#FAFAFA] px-1.5 py-1'
+            title='Probar enlace de redirección'
+          >
+            <ExternalLink size={13} />
+          </a>
+        </div>
+      </td>
     </tr>
   )
 }
@@ -98,6 +135,7 @@ export default function BusinessDetailPage() {
   const [devices, setDevices] = useState<DeviceSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
+  const [selectedQrDevice, setSelectedQrDevice] = useState<DeviceSummary | null>(null)
   const [error, setError] = useState('')
   const [resending, setResending] = useState(false)
   const [resendSuccess, setResendSuccess] = useState('')
@@ -185,11 +223,18 @@ export default function BusinessDetailPage() {
                 <thead><tr className='border-b border-[#222] text-[#555] text-xs uppercase'>
                   <th className='text-left px-5 py-3'>Etiqueta</th><th className='text-left px-4 py-3'>Token</th>
                   <th className='text-left px-4 py-3'>URL destino</th><th className='text-center px-4 py-3'>Escaneos</th>
-                  <th className='text-center px-4 py-3'>Ultimo</th><th className='text-center px-4 py-3'>Estado</th><th className='px-4 py-3' />
+                  <th className='text-center px-4 py-3'>Ultimo</th><th className='text-center px-4 py-3'>Estado</th><th className='px-4 py-3 text-right'>Acciones</th>
                 </tr></thead>
                 <tbody>
                   {devices.length === 0 && <tr><td colSpan={7} className='text-center py-10 text-[#555]'>Sin dispositivos. Crea el primero.</td></tr>}
-                  {devices.map(d => <DeviceRow key={d.id} device={d} onUpdate={u => setDevices(prev => prev.map(x => x.id === u.id ? u : x))} />)}
+                  {devices.map(d => (
+                    <DeviceRow
+                      key={d.id}
+                      device={d}
+                      onUpdate={u => setDevices(prev => prev.map(x => x.id === u.id ? u : x))}
+                      onViewQr={selected => setSelectedQrDevice(selected)}
+                    />
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -197,6 +242,12 @@ export default function BusinessDetailPage() {
         ) : null}
       </div>
       {showModal && business && <CreateDeviceModal businessId={business.id} onClose={() => setShowModal(false)} onCreated={d => { setDevices(prev => [...prev, d]); setShowModal(false) }} />}
+      {selectedQrDevice && (
+        <DeviceQrModal
+          device={selectedQrDevice}
+          onClose={() => setSelectedQrDevice(null)}
+        />
+      )}
     </AdminShell>
   )
 }

@@ -1,7 +1,8 @@
+using System.Text.RegularExpressions;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
-using MimeKit.Text;
+using MimeKit.Utils;
 
 namespace StandUrl.Api.Services;
 
@@ -35,21 +36,40 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
             return;
         }
 
-        var html = $"""
-            <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;background:#0A0A0A;color:#FAFAFA;padding:32px;border-radius:12px;border:1px solid #222;">
-              <h2 style="color:#F5A623;margin-top:0;">🎯 Nuevo prototipo solicitado</h2>
-              <table style="width:100%;border-collapse:collapse;color:#DDD;font-size:14px;margin-top:16px;">
-                <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;width:140px;"><strong>Negocio:</strong></td><td style="font-weight:600;color:#FFF;">{businessName}</td></tr>
-                <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;"><strong>Sector:</strong></td><td>{sector}</td></tr>
-                <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;"><strong>Ciudad:</strong></td><td>{city}</td></tr>
-                <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;"><strong>Contacto:</strong></td><td>{contact}</td></tr>
-                <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;"><strong>Google Maps:</strong></td><td><a href="{googleMapsUrl}" style="color:#F5A623;">{googleMapsUrl ?? "No proporcionado"}</a></td></tr>
-              </table>
-              <p style="color:#555;font-size:12px;margin-top:24px;">StandUrl API · Notificación automática</p>
-            </div>
+        var subject = $"Nuevo prototipo solicitado: {businessName}";
+
+        var textBody = $"""
+            Nuevo prototipo solicitado:
+            - Negocio: {businessName}
+            - Sector: {sector}
+            - Ciudad: {city}
+            - Contacto: {contact}
+            - Google Maps: {googleMapsUrl ?? "No proporcionado"}
+
+            StandUrl API · Notificación automática
             """;
 
-        await SendEmailAsync(_notificationEmail, $"🎯 Nuevo prototipo solicitado: {businessName}", html);
+        var html = $"""
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="utf-8"></head>
+            <body style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:0;padding:20px;background:#0A0A0A;color:#FAFAFA;">
+              <div style="max-width:600px;margin:0 auto;background:#111111;color:#FAFAFA;padding:32px;border-radius:12px;border:1px solid #222;">
+                <h2 style="color:#F5A623;margin-top:0;">Nuevo prototipo solicitado</h2>
+                <table style="width:100%;border-collapse:collapse;color:#DDD;font-size:14px;margin-top:16px;">
+                  <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;width:140px;"><strong>Negocio:</strong></td><td style="font-weight:600;color:#FFF;">{businessName}</td></tr>
+                  <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;"><strong>Sector:</strong></td><td>{sector}</td></tr>
+                  <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;"><strong>Ciudad:</strong></td><td>{city}</td></tr>
+                  <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;"><strong>Contacto:</strong></td><td>{contact}</td></tr>
+                  <tr style="border-bottom:1px solid #222;"><td style="padding:10px 0;color:#888;"><strong>Google Maps:</strong></td><td><a href="{googleMapsUrl}" style="color:#F5A623;">{googleMapsUrl ?? "No proporcionado"}</a></td></tr>
+                </table>
+                <p style="color:#555;font-size:12px;margin-top:24px;">StandUrl API · Notificación automática</p>
+              </div>
+            </body>
+            </html>
+            """;
+
+        await SendEmailAsync(_notificationEmail, subject, html, textBody);
     }
 
     public async Task SendWelcomeEmailAsync(string businessName, string email, string tempPassword, bool isResend = false)
@@ -64,24 +84,42 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
 
         var loginUrl = $"{_siteUrl.TrimEnd('/')}/login";
         var subject = isResend 
-            ? $"🔑 Tus nuevas credenciales de acceso — StandUrl"
-            : $"✅ Bienvenido a StandUrl — Tus credenciales de acceso";
+            ? "Tus nuevas credenciales de acceso — StandUrl"
+            : "Bienvenido a StandUrl — Tus credenciales de acceso";
 
         var titleText = isResend ? "Tus nuevas credenciales de acceso" : $"¡Bienvenido a StandUrl, {businessName}!";
         var introText = isResend
             ? "Se ha generado una nueva contraseña temporal para acceder a tu panel de cliente de StandUrl:"
             : "Tu cuenta de cliente en StandUrl ha sido creada. Aquí tienes tus credenciales de acceso para gestionar tus stands NFC y consultar estadísticas:";
 
+        var textBody = $"""
+            {titleText}
+
+            {introText}
+
+            • Email de acceso: {email}
+            • Contraseña temporal: {tempPassword}
+
+            Accede a tu panel desde el siguiente enlace:
+            {loginUrl}
+
+            Recomendación de seguridad: Te sugerimos cambiar tu contraseña temporal desde tu panel tras iniciar sesión.
+
+            ¿Tienes alguna duda o necesitas soporte? Responde directamente a este correo.
+
+            © {DateTime.UtcNow.Year} StandUrl · Dispositivos Inteligentes NFC
+            """;
+
         var html = $"""
             <!DOCTYPE html>
-            <html>
+            <html lang="es">
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>{subject}</title>
             </head>
-            <body style="margin:0;padding:0;background-color:#050505;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#FAFAFA;">
-              <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;margin:30px auto;background-color:#0F0F0F;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+            <body style="margin:0;padding:0;background-color:#0A0A0A;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#FAFAFA;">
+              <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;margin:30px auto;background-color:#111111;border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
                 <!-- Header -->
                 <tr>
                   <td align="center" style="padding:36px 30px 20px;border-bottom:1px solid #1A1A1A;">
@@ -143,10 +181,10 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
             </html>
             """;
 
-        await SendEmailAsync(email, subject, html);
+        await SendEmailAsync(email, subject, html, textBody);
     }
 
-    private async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
+    private async Task SendEmailAsync(string toEmail, string subject, string htmlBody, string? textBody = null)
     {
         try
         {
@@ -154,14 +192,27 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
             message.From.Add(new MailboxAddress(_fromName, _fromEmail));
             message.To.Add(MailboxAddress.Parse(toEmail));
             message.Subject = subject;
+            message.Date = DateTimeOffset.UtcNow;
 
-            message.Body = new TextPart(TextFormat.Html)
+            var fromDomain = _fromEmail.Contains('@') ? _fromEmail.Split('@')[1] : "standurl.com";
+            message.MessageId = MimeUtils.GenerateMessageId(fromDomain);
+            message.Headers.Add("X-Mailer", "StandUrl Mailer");
+
+            // Multipart/Alternative: clave fundamental para evitar filtros de SPAM
+            var plainText = !string.IsNullOrWhiteSpace(textBody)
+                ? textBody
+                : Regex.Replace(htmlBody, "<[^>]*>", " ").Trim();
+
+            var builder = new BodyBuilder
             {
-                Text = htmlBody
+                HtmlBody = htmlBody,
+                TextBody = plainText
             };
 
+            message.Body = builder.ToMessageBody();
+
             using var client = new SmtpClient();
-            // Aceptar certificados SSL de OVH de forma segura
+            client.Timeout = 10000; // Timeout de 10s para evitar bloqueos
             client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
             var socketOption = _smtpPort switch
@@ -173,13 +224,16 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
 
             await client.ConnectAsync(_smtpHost, _smtpPort, socketOption);
 
+            // Optimización de handshake de autenticación
+            client.AuthenticationMechanisms.Remove("XOAUTH2");
+
             if (!string.IsNullOrWhiteSpace(_smtpUser) && !string.IsNullOrWhiteSpace(_smtpPassword))
             {
                 await client.AuthenticateAsync(_smtpUser, _smtpPassword);
             }
 
             await client.SendAsync(message);
-            await client.DisconnectAsync(true);
+            await client.DisconnectAsync(false); // Cierre rápido sin esperar ACK redundante
 
             logger.LogInformation("Email enviado con éxito a {ToEmail} (Asunto: {Subject})", toEmail, subject);
         }

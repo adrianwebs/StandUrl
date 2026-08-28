@@ -31,6 +31,7 @@ import {
   Layers,
   Flame,
 } from 'lucide-react'
+import { DeviceQrModal } from '@/components/DeviceQrModal'
 
 // Modal para cambiar contraseña
 function ChangePasswordModal({
@@ -175,87 +176,6 @@ function ChangePasswordModal({
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  )
-}
-
-// Modal para ver y descargar QR
-function QrModal({
-  device,
-  onClose,
-}: {
-  device: ClientDevice | null
-  onClose: () => void
-}) {
-  const [copied, setCopied] = useState(false)
-  if (!device) return null
-
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://standurl.com'
-  const redirectUrl = `${origin}/t/${device.token}?src=qr`
-  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${encodeURIComponent(
-    redirectUrl
-  )}&bgcolor=FFFFFF&color=0A0A0A&margin=15`
-
-  function copyLink() {
-    navigator.clipboard.writeText(redirectUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-      <div className="bg-[#111] border border-[#2A2A2A] rounded-2xl p-6 sm:p-8 w-full max-w-sm text-center shadow-2xl">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-left">
-            <h3 className="font-bold text-[#FAFAFA] text-base">{device.label}</h3>
-            <p className="text-xs text-[#777]">Código QR asociado al Stand NFC</p>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-[#666] hover:text-[#FAFAFA] transition-colors p-1 rounded-lg hover:bg-[#222]"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl inline-block my-3 shadow-xl">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={qrImageUrl} alt={`QR ${device.label}`} className="w-56 h-56 mx-auto object-contain" />
-        </div>
-
-        <p className="text-xs text-[#888] mb-4">
-          Este QR redirige en tiempo real a la URL que configures para este stand.
-        </p>
-
-        <div className="flex flex-col gap-2">
-          <button
-            onClick={copyLink}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#1A1A1A] hover:bg-[#222] border border-[#333] text-xs font-semibold text-[#FAFAFA] transition-colors"
-          >
-            {copied ? (
-              <>
-                <Check size={14} className="text-green-400" />
-                <span className="text-green-400">Enlace copiado</span>
-              </>
-            ) : (
-              <>
-                <Copy size={14} />
-                <span>Copiar enlace directo</span>
-              </>
-            )}
-          </button>
-
-          <a
-            href={qrImageUrl}
-            download={`QR-${device.label.replace(/\s+/g, '_')}.png`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#F5A623] hover:bg-[#E59512] text-[#0A0A0A] text-xs font-bold transition-colors"
-          >
-            Descargar imagen QR
-          </a>
-        </div>
       </div>
     </div>
   )
@@ -477,7 +397,7 @@ function DeviceCard({
 
       {/* Modal QR */}
       {showQrModal && (
-        <QrModal device={device} onClose={() => setShowQrModal(false)} />
+        <DeviceQrModal device={device} onClose={() => setShowQrModal(false)} />
       )}
     </div>
   )

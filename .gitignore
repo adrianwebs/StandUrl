@@ -23,6 +23,7 @@ apps/web/.env.local
 apps/web/.env.development.local
 apps/web/.env.test.local
 apps/web/.env.production.local
+*.tsbuildinfo
 
 # Docker
 infra/**/.env
