@@ -1,15 +1,13 @@
 version: '3.9'
 
-# ── Producción: web + api + redis + traefik ──────────────────────────────────
-# La BD está en el servidor externo 51.195.47.36 (SQL Server managed)
-# Redis sí corre en el servidor para cache de redirects
+# ── Producción Monorepo: web + api + redis ───────────────────────────────────
+# Se conecta a la red externa 'proxy' donde ya corre Traefik
 #
-# Variables de entorno requeridas en el archivo .env en el servidor:
-#   WEB_IMAGE        ghcr.io/TU_ORG/standurl-web:latest
-#   API_IMAGE        ghcr.io/TU_ORG/standurl-api:latest  (o ACR)
-#   DOMAIN           standurl.com
-#   API_DOMAIN       api.standurl.com
-#   ACME_EMAIL       tu@email.com
+# Variables de entorno requeridas en el archivo .env:
+#   WEB_IMAGE        ghcr.io/adrianwebs/standurl-web:latest
+#   API_IMAGE        ghcr.io/adrianwebs/standurl-api:latest
+#   DOMAIN           standurl.webadir.es
+#   API_DOMAIN       apistandurl.webadir.es
 #   JWT_SECRET       (secreto largo, 64+ chars)
 #   SMTP_HOST        ssl0.ovh.net
 #   SMTP_PORT        465
@@ -21,34 +19,9 @@ version: '3.9'
 #   NOTIFICATION_EMAIL  dev@standurl.com
 
 services:
-  # ── Traefik (reverse proxy + SSL) ─────────────────────────────────────────
-  traefik:
-    image: traefik:v3.1
-    container_name: standurl-traefik
-    restart: unless-stopped
-    command:
-      - "--api.insecure=false"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-certs:/letsencrypt
-    networks:
-      - standurl-net
-
-  # ── Next.js (landing + futuro dashboard) ──────────────────────────────────
+  # ── Next.js (landing + portal) ────────────────────────────────────────────
   web:
-    image: ${WEB_IMAGE}
+    image: ${WEB_IMAGE:-ghcr.io/adrianwebs/standurl-web:latest}
     container_name: standurl-web
     restart: unless-stopped
     environment:
@@ -57,29 +30,23 @@ services:
       - NEXT_PUBLIC_SITE_URL=https://${DOMAIN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)"
-      - "traefik.http.routers.web.entrypoints=websecure"
-      - "traefik.http.routers.web.tls.certresolver=letsencrypt"
-      - "traefik.http.services.web.loadbalancer.server.port=3000"
-      # Redirect www → apex
-      - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)"
-      - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}"
-      - "traefik.http.routers.web.middlewares=www-redirect"
+      - "traefik.http.routers.standurl-web.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.standurl-web.entrypoints=websecure"
+      - "traefik.http.routers.standurl-web.tls=true"
+      - "traefik.http.routers.standurl-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.standurl-web.loadbalancer.server.port=3000"
     networks:
-      - standurl-net
-    depends_on:
-      - traefik
+      - proxy
 
   # ── ASP.NET Core API ────────────────────────────────────────────────────────
   api:
-    image: ${API_IMAGE}
+    image: ${API_IMAGE:-ghcr.io/adrianwebs/standurl-api:latest}
     container_name: standurl-api
     restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      # Connection string inyectada como variable de entorno (sobreescribe appsettings)
-      - ConnectionStrings__DefaultConnection=Server=51.195.47.36;initial catalog=StandUrlProd;persist security info=True;user id=sa;password=0D'1YQgpFHmYCQ!`ibHY;multipleactiveresultsets=True;application name=EntityFramework;Encrypt=false;
-      - Redis__ConnectionString=redis:6379
+      - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION:-Server=51.195.47.36;initial catalog=StandUrlProd;persist security info=True;user id=sa;password=0D'1YQgpFHmYCQ!`ibHY;multipleactiveresultsets=True;application name=EntityFramework;Encrypt=false;}
+      - Redis__ConnectionString=standurl-redis:6379
       - Jwt__Secret=${JWT_SECRET}
       - Cors__AllowedOrigins__0=https://${DOMAIN}
       - Cors__AllowedOrigins__1=https://standurl.webadir.es
@@ -95,15 +62,16 @@ services:
       - Smtp__NotificationEmail=${NOTIFICATION_EMAIL:-dev@standurl.com}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`${API_DOMAIN}`)"
-      - "traefik.http.routers.api.entrypoints=websecure"
-      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
-      - "traefik.http.services.api.loadbalancer.server.port=8080"
+      - "traefik.http.routers.standurl-api.rule=Host(`${API_DOMAIN}`)"
+      - "traefik.http.routers.standurl-api.entrypoints=websecure"
+      - "traefik.http.routers.standurl-api.tls=true"
+      - "traefik.http.routers.standurl-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.standurl-api.loadbalancer.server.port=8080"
     networks:
+      - proxy
       - standurl-net
     depends_on:
       - redis
-      - traefik
 
   # ── Redis (cache de redirects) ─────────────────────────────────────────────
   redis:
@@ -117,9 +85,10 @@ services:
       - standurl-net
 
 volumes:
-  traefik-certs:
   redis-data:
 
 networks:
+  proxy:
+    external: true
   standurl-net:
     driver: bridge

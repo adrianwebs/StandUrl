@@ -1,0 +1,59 @@
+version: '3.9'
+
+# ── StandUrl API + Redis (Producción) ─────────────────────────────────────────
+# Ubicación en servidor: /docker/clientes/standurl/api/docker-compose.prod.yml
+# Se conecta a la red externa 'proxy' donde ya corre Traefik
+
+services:
+  api:
+    image: ${API_IMAGE:-ghcr.io/adrianwebs/standurl-api:latest}
+    container_name: standurl-api
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=${DEFAULT_CONNECTION:-Server=51.195.47.36;initial catalog=StandUrlProd;persist security info=True;user id=sa;password=0D'1YQgpFHmYCQ!`ibHY;multipleactiveresultsets=True;application name=EntityFramework;Encrypt=false;}
+      - Redis__ConnectionString=standurl-redis:6379
+      - Jwt__Secret=${JWT_SECRET}
+      - Cors__AllowedOrigins__0=https://${DOMAIN}
+      - Cors__AllowedOrigins__1=https://standurl.webadir.es
+      - Cors__AllowedOrigins__2=https://standurl.com
+      - Cors__AllowedOrigins__3=https://www.standurl.com
+      - Smtp__Host=${SMTP_HOST:-ssl0.ovh.net}
+      - Smtp__Port=${SMTP_PORT:-465}
+      - Smtp__UseSsl=${SMTP_USE_SSL:-true}
+      - Smtp__User=${SMTP_USER}
+      - Smtp__Password=${SMTP_PASSWORD}
+      - Smtp__FromEmail=${SMTP_FROM_EMAIL:-adrian@webadir.es}
+      - Smtp__FromName=${SMTP_FROM_NAME:-StandUrl}
+      - Smtp__NotificationEmail=${NOTIFICATION_EMAIL:-dev@standurl.com}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.standurl-api.rule=Host(`${API_DOMAIN}`)"
+      - "traefik.http.routers.standurl-api.entrypoints=websecure"
+      - "traefik.http.routers.standurl-api.tls=true"
+      - "traefik.http.routers.standurl-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.standurl-api.loadbalancer.server.port=8080"
+    networks:
+      - proxy
+      - standurl-api-net
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: standurl-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - standurl-api-net
+
+volumes:
+  redis-data:
+
+networks:
+  proxy:
+    external: true
+  standurl-api-net:
+    driver: bridge

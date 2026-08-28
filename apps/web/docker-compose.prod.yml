@@ -1,0 +1,28 @@
+version: '3.9'
+
+# ── StandUrl Web Next.js (Producción) ─────────────────────────────────────────
+# Ubicación en servidor: /docker/clientes/standurl/web/docker-compose.prod.yml
+# Se conecta a la red externa 'proxy' donde ya corre Traefik
+
+services:
+  web:
+    image: ${WEB_IMAGE:-ghcr.io/adrianwebs/standurl-web:latest}
+    container_name: standurl-web
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://${API_DOMAIN}
+      - NEXT_PUBLIC_SITE_URL=https://${DOMAIN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.standurl-web.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.standurl-web.entrypoints=websecure"
+      - "traefik.http.routers.standurl-web.tls=true"
+      - "traefik.http.routers.standurl-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.standurl-web.loadbalancer.server.port=3000"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
