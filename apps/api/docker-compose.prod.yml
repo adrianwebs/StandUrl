@@ -35,7 +35,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
 
-      - "traefik.http.routers.standurl-api.rule=Host(`apistandurl.webadir.es`) || Host(`api.standurl.com`)"
+      - "traefik.http.routers.standurl-api.rule=Host(`apistandurl.webadir.es`)"
       - "traefik.http.routers.standurl-api.entrypoints=websecure"
       - "traefik.http.routers.standurl-api.tls=true"
       - "traefik.http.routers.standurl-api.tls.certresolver=letsencrypt"

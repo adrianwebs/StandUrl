@@ -1,39 +1,25 @@
-name: standurl-web
+version: '3.8'
 
 services:
   web:
     image: ghcr.io/adrianwebs/standurl-web:latest
     container_name: standurl-web
     restart: unless-stopped
-
     environment:
-      NODE_ENV: production
-      PORT: 3000
-      TZ: Europe/Madrid
-      NEXT_PUBLIC_API_URL: https://apistandurl.webadir.es
-      NEXT_PUBLIC_SITE_URL: https://standurl.webadir.es
-
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://apistandurl.webadir.es
+      - NEXT_PUBLIC_SITE_URL=https://standurl.webadir.es
     networks:
       - proxy
-
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-
-      - "traefik.http.routers.standurl-web.rule=Host(`standurl.webadir.es`) || Host(`standurl.com`)"
+      - "traefik.http.routers.standurl-web.rule=Host(`standurl.webadir.es`)"
       - "traefik.http.routers.standurl-web.entrypoints=websecure"
       - "traefik.http.routers.standurl-web.tls=true"
       - "traefik.http.routers.standurl-web.tls.certresolver=letsencrypt"
-
       - "traefik.http.services.standurl-web.loadbalancer.server.port=3000"
-
-      - "traefik.http.middlewares.standurl-web-security.headers.stsSeconds=31536000"
-      - "traefik.http.middlewares.standurl-web-security.headers.stsIncludeSubdomains=true"
-      - "traefik.http.middlewares.standurl-web-security.headers.contentTypeNosniff=true"
-      - "traefik.http.middlewares.standurl-web-security.headers.browserXssFilter=true"
-      - "traefik.http.routers.standurl-web.middlewares=standurl-web-security@docker"
 
 networks:
   proxy:
     external: true
-    name: proxy

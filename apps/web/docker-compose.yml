@@ -14,7 +14,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.standurl-web.rule=Host(`standurl.webadir.es`) || Host(`standurl.com`) || Host(`www.standurl.com`)"
+      - "traefik.http.routers.standurl-web.rule=Host(`standurl.webadir.es`)"
       - "traefik.http.routers.standurl-web.entrypoints=websecure"
       - "traefik.http.routers.standurl-web.tls=true"
       - "traefik.http.routers.standurl-web.tls.certresolver=letsencrypt"
