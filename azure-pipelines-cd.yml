@@ -1,0 +1,158 @@
+# Azure DevOps — Pipeline CD para apps/api (ASP.NET Core)
+#
+# VARIABLE GROUP requerido (Azure DevOps → Pipelines → Library → "standurl-api-secrets"):
+#   DOCKER_REGISTRY_URL       ej: ghcr.io o standurl.azurecr.io
+#   DOCKER_REGISTRY_USERNAME  usuario del registry
+#   DOCKER_REGISTRY_PASSWORD  (marcar como secreto 🔒)
+#   SSH_HOST                  51.195.47.36
+#   SSH_USER                  usuario del servidor
+#   SSH_PRIVATE_KEY           clave privada SSH (marcar como secreto 🔒)
+#   SSH_PORT                  22
+#
+# ENVIRONMENTS requeridos en Azure DevOps → Pipelines → Environments:
+#   standurl-production  (con aprobación manual si lo deseas)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - apps/api/**
+      - azure-pipelines-cd.yml
+
+pr: none   # CD solo en push a main, nunca en PRs
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: standurl-api-secrets          # Variable group con los secretos
+  - name: buildConfiguration
+    value: 'Release'
+  - name: dotnetVersion
+    value: '9.0.x'
+  - name: projectPath
+    value: 'apps/api/StandUrl.Api/StandUrl.Api.csproj'
+  - name: testProjectPath
+    value: 'apps/api/StandUrl.Api.Tests/StandUrl.Api.Tests.csproj'
+  - name: imageRepository
+    value: 'standurl-api'
+  - name: dockerfilePath
+    value: 'apps/api/Dockerfile'
+
+stages:
+  # ── Stage 1: Build & Test ───────────────────────────────────────────────────
+  - stage: Build
+    displayName: 'Build & Test'
+    jobs:
+      - job: BuildAndTest
+        displayName: 'Build, test & publish artifact'
+        steps:
+          - checkout: self
+            fetchDepth: 0
+
+          - task: UseDotNet@2
+            displayName: 'Instalar .NET $(dotnetVersion)'
+            inputs:
+              packageType: 'sdk'
+              version: '$(dotnetVersion)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore'
+            inputs:
+              command: 'restore'
+              projects: 'apps/api/**/*.csproj'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build'
+            inputs:
+              command: 'build'
+              projects: '$(projectPath)'
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Test'
+            inputs:
+              command: 'test'
+              projects: '$(testProjectPath)'
+              arguments: '--configuration $(buildConfiguration) --no-build'
+
+  # ── Stage 2: Docker Build & Push ────────────────────────────────────────────
+  - stage: Docker
+    displayName: 'Docker Build & Push'
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: DockerBuildPush
+        displayName: 'Build & Push imagen Docker'
+        steps:
+          - checkout: self
+
+          - task: Docker@2
+            displayName: 'Login al registry'
+            inputs:
+              command: 'login'
+              containerRegistry: 'standurl-registry'   # Service connection en Azure DevOps
+
+          - task: Docker@2
+            displayName: 'Build imagen'
+            inputs:
+              command: 'build'
+              repository: '$(imageRepository)'
+              dockerfile: '$(dockerfilePath)'
+              buildContext: 'apps/api'
+              tags: |
+                $(Build.BuildId)
+                latest
+
+          - task: Docker@2
+            displayName: 'Push imagen'
+            inputs:
+              command: 'push'
+              repository: '$(imageRepository)'
+              tags: |
+                $(Build.BuildId)
+                latest
+
+  # ── Stage 3: Deploy Producción ──────────────────────────────────────────────
+  - stage: DeployProd
+    displayName: 'Deploy → Producción'
+    dependsOn: Docker
+    condition: succeeded()
+    jobs:
+      - deployment: DeployToProduction
+        displayName: 'Deploy al servidor'
+        environment: 'standurl-production'   # Configura aprobación manual aquí si lo necesitas
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: SSH@0
+                  displayName: 'Pull & restart contenedor API'
+                  inputs:
+                    sshEndpoint: 'standurl-server-ssh'   # Service connection SSH en Azure DevOps
+                    runOptions: 'inline'
+                    inline: |
+                      set -e
+                      
+                      # Login al registry desde el servidor
+                      echo "$(DOCKER_REGISTRY_PASSWORD)" | docker login $(DOCKER_REGISTRY_URL) \
+                        -u $(DOCKER_REGISTRY_USERNAME) --password-stdin
+                      
+                      # Pull imagen nueva
+                      docker pull $(DOCKER_REGISTRY_URL)/$(imageRepository):latest
+                      
+                      # Recrear el contenedor API
+                      cd /docker/clientes/standurl/api
+                      docker compose -f docker-compose.prod.yml up -d --no-deps --force-recreate api
+                      
+                      # Limpiar imágenes antiguas
+                      docker image prune -f
+
+                - task: CmdLine@2
+                  displayName: 'Smoke test API'
+                  inputs:
+                    script: |
+                      sleep 15
+                      curl -f https://api.standurl.com/health || exit 1

@@ -1,0 +1,54 @@
+# GitHub Actions — CI/CD para apps/web (Next.js)
+#
+# SECRETS requeridos en GitHub → Settings → Secrets and variables → Actions:
+#   DOCKER_REGISTRY        ej: docker.io o ghcr.io
+#   DOCKER_USERNAME        usuario del registry
+#   DOCKER_PASSWORD        token/password del registry
+#   SSH_HOST               IP del servidor de producción (51.195.47.36)
+#   SSH_USER               usuario SSH del servidor
+#   SSH_PRIVATE_KEY        clave privada SSH (sin passphrase)
+#   SSH_PORT               puerto SSH (normalmente 22)
+
+name: Web — CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - '.github/workflows/web-ci.yml'
+
+defaults:
+  run:
+    working-directory: apps/web
+
+jobs:
+  ci:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL_DEV || 'http://localhost:8080' }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL_DEV || 'http://localhost:3000' }}

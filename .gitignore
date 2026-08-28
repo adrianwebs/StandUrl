@@ -1,0 +1,44 @@
+# ── StandUrl Monorepo .gitignore ─────────────────────────────────────────────
+
+# ⚠️  CRITICAL: Nunca commitear appsettings con credenciales reales
+# El pipeline de Azure DevOps inyecta los valores en tiempo de deploy
+apps/api/**/appsettings.Development.json
+apps/api/**/appsettings.Production.json
+
+# .NET
+apps/api/**/bin/
+apps/api/**/obj/
+apps/api/**/.vs/
+apps/api/**/*.user
+apps/api/**/*.suo
+apps/api/**/TestResults/
+apps/api/**/.nuget/
+
+# Next.js / Node
+apps/web/.next/
+apps/web/out/
+apps/web/node_modules/
+apps/web/.env
+apps/web/.env.local
+apps/web/.env.development.local
+apps/web/.env.test.local
+apps/web/.env.production.local
+
+# Docker
+infra/**/.env
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Coverage
+coverage/
+*.lcov

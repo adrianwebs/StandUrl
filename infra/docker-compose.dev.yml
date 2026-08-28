@@ -1,0 +1,60 @@
+version: '3.9'
+
+# ── Desarrollo local: web + api + redis ─────────────────────────────────────
+# La BD de dev está en el servidor externo 51.195.47.36 (StandUrlDev)
+# NO incluye Traefik — acceso directo por puertos
+
+services:
+  web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+        NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    container_name: standurl-web-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+    volumes:
+      # Hot reload en dev (si usas next dev fuera de Docker es más rápido)
+      - ../apps/web:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - standurl-dev-net
+
+  api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+    container_name: standurl-api-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # La connection string de dev se lee desde appsettings.Development.json
+      # montado como volumen (no en imagen)
+      - Redis__ConnectionString=redis-dev:6379
+    volumes:
+      - ../apps/api/StandUrl.Api/appsettings.Development.json:/app/appsettings.Development.json:ro
+    networks:
+      - standurl-dev-net
+    depends_on:
+      - redis-dev
+
+  redis-dev:
+    image: redis:7-alpine
+    container_name: standurl-redis-dev
+    ports:
+      - "6379:6379"
+    command: redis-server --save "" --appendonly no
+    networks:
+      - standurl-dev-net
+
+networks:
+  standurl-dev-net:
+    driver: bridge

@@ -1,0 +1,76 @@
+# Azure DevOps — Pipeline CI para apps/api (ASP.NET Core)
+#
+# VARIABLES DE PIPELINE requeridas (Azure DevOps → Pipelines → Library → Variable group: "standurl-api"):
+#   DOCKER_REGISTRY_URL       ej: docker.io o tu ACR (standurl.azurecr.io)
+#   DOCKER_REGISTRY_USERNAME  usuario del registry
+#   DOCKER_REGISTRY_PASSWORD  password/token (marcar como secreto)
+#
+# Este pipeline se ejecuta en Pull Requests a main.
+# No hace push de imagen ni deploy — solo valida que el código compila y los tests pasan.
+
+trigger: none   # Solo CI en PRs — el CD está en azure-pipelines-cd.yml
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - apps/api/**
+      - azure-pipelines-ci.yml
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  dotnetVersion: '9.0.x'
+  projectPath: 'apps/api/StandUrl.Api/StandUrl.Api.csproj'
+  testProjectPath: 'apps/api/StandUrl.Api.Tests/StandUrl.Api.Tests.csproj'
+
+stages:
+  - stage: CI
+    displayName: 'Build & Test'
+    jobs:
+      - job: BuildAndTest
+        displayName: 'Build, lint & test'
+        steps:
+          - checkout: self
+            fetchDepth: 0
+
+          - task: UseDotNet@2
+            displayName: 'Instalar .NET $(dotnetVersion)'
+            inputs:
+              packageType: 'sdk'
+              version: '$(dotnetVersion)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore NuGet packages'
+            inputs:
+              command: 'restore'
+              projects: 'apps/api/**/*.csproj'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build (Release)'
+            inputs:
+              command: 'build'
+              projects: '$(projectPath)'
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run tests'
+            inputs:
+              command: 'test'
+              projects: '$(testProjectPath)'
+              arguments: >
+                --configuration $(buildConfiguration)
+                --no-build
+                --collect:"XPlat Code Coverage"
+                --results-directory $(Agent.TempDirectory)/coverage
+            continueOnError: false
+
+          - task: PublishCodeCoverageResults@2
+            displayName: 'Publicar cobertura de código'
+            inputs:
+              summaryFileLocation: '$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml'
+              failIfCoverageEmpty: false

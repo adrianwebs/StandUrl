@@ -1,0 +1,138 @@
+# GitHub Actions — CD para apps/web (Next.js)
+#
+# SECRETS requeridos en GitHub → Settings → Secrets and variables → Actions:
+#   DOCKER_REGISTRY        ej: ghcr.io
+#   DOCKER_USERNAME        usuario del registry
+#   DOCKER_PASSWORD        token del registry (GitHub → Settings → Developer settings → PAT)
+#   SSH_HOST               IP del servidor (51.195.47.36)
+#   SSH_USER               usuario SSH del servidor
+#   SSH_PRIVATE_KEY        clave privada SSH
+#   SSH_PORT               22
+#
+# VARS (no secretos) en GitHub → Settings → Variables:
+#   NEXT_PUBLIC_API_URL      https://api.standurl.com
+#   NEXT_PUBLIC_SITE_URL     https://standurl.com
+
+name: Web — CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - '.github/workflows/web-cd.yml'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/standurl-web
+
+defaults:
+  run:
+    working-directory: apps/web
+
+jobs:
+  # ── 1. CI rápido antes de desplegar ─────────────────────────────────────────
+  ci:
+    name: Lint & Build check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install & Build
+        run: |
+          npm ci
+          npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+
+  # ── 2. Build & Push imagen Docker ───────────────────────────────────────────
+  docker:
+    name: Build & Push Docker image
+    runs-on: ubuntu-latest
+    needs: ci
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      image_digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: apps/web
+          file: apps/web/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL }}
+
+  # ── 3. Deploy al servidor vía SSH ───────────────────────────────────────────
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: docker
+    environment: production
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            # Login al registry desde el servidor
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+            # Pull imagen nueva
+            docker pull ghcr.io/${{ github.repository_owner }}/standurl-web:latest
+
+            # Recrear el contenedor
+            cd /docker/clientes/standurl/web
+            docker compose -f docker-compose.prod.yml up -d --no-deps --force-recreate web
+
+            # Limpiar imágenes antiguas
+            docker image prune -f
+
+      - name: Smoke test
+        run: |
+          sleep 10
+          curl -f https://standurl.com/ || exit 1
