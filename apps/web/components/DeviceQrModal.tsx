@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import QRCode from 'qrcode'
 import {
   X,
@@ -10,8 +10,8 @@ import {
   ExternalLink,
   Code2,
   QrCode as QrIcon,
-  Layers,
   Sparkles,
+  Box,
 } from 'lucide-react'
 
 export interface QrDeviceData {
@@ -28,12 +28,69 @@ interface DeviceQrModalProps {
   siteUrl?: string
 }
 
+/**
+ * Genera un SVG compuesto exclusivamente por polígonos cerrados 2D (comando 'Z').
+ * Diseñado específicamente para Blender, Fusion 360, FreeCAD e impresoras 3D,
+ * garantizando que al importar en Blender se reconozcan como caras sólidas y se puedan
+ * extruir (Geometry > Extrude) sin líneas abiertas ni errores de curva.
+ */
+function buildBlenderCompatibleSvg(
+  url: string,
+  options: {
+    margin?: number
+    moduleSize?: number
+    includeBackground?: boolean
+  } = {}
+): string {
+  const margin = options.margin ?? 1
+  const moduleSize = options.moduleSize ?? 10
+  const includeBackground = options.includeBackground ?? false
+
+  const qr = QRCode.create(url, { errorCorrectionLevel: 'M' })
+  const matrixSize = qr.modules.size
+  const totalUnits = (matrixSize + margin * 2) * moduleSize
+
+  let pathD = ''
+
+  for (let row = 0; row < matrixSize; row++) {
+    let col = 0
+    while (col < matrixSize) {
+      if (qr.modules.get(row, col)) {
+        // Agrupar módulos horizontales consecutivos en un solo polígono cerrado para optimizar geometría
+        const startCol = col
+        while (col < matrixSize && qr.modules.get(row, col)) {
+          col++
+        }
+        const spanCols = col - startCol
+        const x = (startCol + margin) * moduleSize
+        const y = (row + margin) * moduleSize
+        const width = spanCols * moduleSize
+        const height = moduleSize
+
+        // Polígono rectangular cerrado con comando Z explícito
+        pathD += `M${x},${y}h${width}v${height}h-${width}Z `
+      } else {
+        col++
+      }
+    }
+  }
+
+  const bgRect = includeBackground
+    ? `<rect width="${totalUnits}" height="${totalUnits}" fill="#FFFFFF"/>\n`
+    : ''
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalUnits} ${totalUnits}" width="${totalUnits}" height="${totalUnits}" shape-rendering="crispEdges">
+${bgRect}<path fill="#000000" fill-rule="nonzero" stroke="none" d="${pathD.trim()}"/>
+</svg>`
+}
+
 export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) {
-  const [svgContent, setSvgContent] = useState<string>('')
+  const [svg3dContent, setSvg3dContent] = useState<string>('')
   const [pngDataUrl, setPngDataUrl] = useState<string>('')
   const [copiedLink, setCopiedLink] = useState(false)
   const [copiedSvg, setCopiedSvg] = useState(false)
-  const [transparentBg, setTransparentBg] = useState(false)
+  const [transparentBg, setTransparentBg] = useState(true)
   const [generating, setGenerating] = useState(true)
 
   const redirectUrl = useMemo(() => {
@@ -43,66 +100,60 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
     return `${origin.replace(/\/$/, '')}/t/${device.token}?src=qr`
   }, [device, siteUrl])
 
-  useEffect(() => {
+  const generateCodes = useCallback(async () => {
     if (!device || !redirectUrl) return
 
-    let isMounted = true
     setGenerating(true)
+    try {
+      // SVG vectorial con polígonos cerrados para Blender / CAD 3D (sin fondo)
+      const svg3d = buildBlenderCompatibleSvg(redirectUrl, {
+        margin: 1,
+        moduleSize: 10,
+        includeBackground: !transparentBg,
+      })
 
-    async function generateCodes() {
-      try {
-        // Generar SVG vectorial puro (ideal para Blender, Fusion 360, FreeCAD, Illustrator, corte láser)
-        const svg = await QRCode.toString(redirectUrl, {
-          type: 'svg',
-          margin: 1,
-          errorCorrectionLevel: 'M',
-          color: {
-            dark: '#000000',
-            light: transparentBg ? '#00000000' : '#FFFFFF',
-          },
-        })
+      // PNG de alta resolución (1024x1024)
+      const png = await QRCode.toDataURL(redirectUrl, {
+        type: 'image/png',
+        width: 1024,
+        margin: 1,
+        errorCorrectionLevel: 'M',
+        color: {
+          dark: '#000000',
+          light: transparentBg ? '#00000000' : '#FFFFFF',
+        },
+      })
 
-        // Generar PNG de alta resolución (1024x1024)
-        const png = await QRCode.toDataURL(redirectUrl, {
-          type: 'image/png',
-          width: 1024,
-          margin: 1,
-          errorCorrectionLevel: 'M',
-          color: {
-            dark: '#000000',
-            light: transparentBg ? '#00000000' : '#FFFFFF',
-          },
-        })
-
-        if (isMounted) {
-          setSvgContent(svg)
-          setPngDataUrl(png)
-          setGenerating(false)
-        }
-      } catch (err) {
-        console.error('Error generando códigos QR:', err)
-        if (isMounted) setGenerating(false)
-      }
-    }
-
-    generateCodes()
-
-    return () => {
-      isMounted = false
+      setSvg3dContent(svg3d)
+      setPngDataUrl(png)
+      setGenerating(false)
+    } catch (err) {
+      console.error('Error generando códigos QR:', err)
+      setGenerating(false)
     }
   }, [device, redirectUrl, transparentBg])
+
+  useEffect(() => {
+    generateCodes()
+  }, [generateCodes])
 
   if (!device) return null
 
   const sanitizedFileName = `QR_${device.label.trim().replace(/[^a-zA-Z0-9_-]/g, '_')}_${device.token}`
 
-  function downloadSvg() {
-    if (!svgContent) return
-    const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' })
+  function downloadSvgForBlender() {
+    // Generar siempre SVG puro sin fondo y con polígonos cerrados para Blender
+    const pure3dSvg = buildBlenderCompatibleSvg(redirectUrl, {
+      margin: 1,
+      moduleSize: 10,
+      includeBackground: false,
+    })
+
+    const blob = new Blob([pure3dSvg], { type: 'image/svg+xml;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `${sanitizedFileName}.svg`
+    link.download = `${sanitizedFileName}_3D.svg`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -120,9 +171,9 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
   }
 
   async function copySvgCode() {
-    if (!svgContent) return
+    if (!svg3dContent) return
     try {
-      await navigator.clipboard.writeText(svgContent)
+      await navigator.clipboard.writeText(svg3dContent)
       setCopiedSvg(true)
       setTimeout(() => setCopiedSvg(false), 2000)
     } catch (e) {
@@ -142,7 +193,7 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-      <div className="bg-[#111] border border-[#2A2A2A] rounded-2xl p-6 sm:p-7 w-full max-w-lg shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-[#111] border border-[#2A2A2A] rounded-2xl p-6 sm:p-7 w-full max-w-xl shadow-2xl animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#222]">
           <div className="flex items-center gap-2.5">
@@ -182,10 +233,10 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
                 <div className="w-44 h-44 flex items-center justify-center text-xs text-[#888]">
                   Generando QR...
                 </div>
-              ) : svgContent ? (
+              ) : svg3dContent ? (
                 <div
                   className="w-44 h-44 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full"
-                  dangerouslySetInnerHTML={{ __html: svgContent }}
+                  dangerouslySetInnerHTML={{ __html: svg3dContent }}
                 />
               ) : null}
             </div>
@@ -210,18 +261,20 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
           <div className="space-y-3 text-xs">
             <div className="bg-[#181818] border border-[#282828] rounded-xl p-3 space-y-1.5">
               <div className="flex items-center gap-1.5 text-[#F5A623] font-semibold text-[11px] uppercase tracking-wider">
-                <Sparkles size={13} />
-                <span>Optimizado para Modelado 3D</span>
+                <Box size={14} />
+                <span>Compatibilidad 3D / Blender</span>
               </div>
-              <p className="text-[#999] leading-relaxed text-[11px]">
-                El archivo <strong>.SVG</strong> es un vector limpio con rutas exactas. Puedes importarlo directamente en:
+              <p className="text-[#AAA] leading-relaxed text-[11px]">
+                Este SVG está generado con <strong>polígonos 2D cerrados</strong> (sin líneas abiertas ni fondo blanco plano).
               </p>
-              <ul className="text-[#888] text-[11px] list-disc list-inside space-y-0.5">
-                <li>Fusion 360 / FreeCAD / AutoCAD</li>
-                <li>Blender (Curva / Extrusión 3D)</li>
-                <li>Illustrator / LightBurn (Corte láser)</li>
-                <li>Impresión 3D de 2 colores</li>
-              </ul>
+              <div className="bg-[#0F0F0F] border border-[#262626] rounded-lg p-2 text-[10.5px] text-[#888] space-y-1">
+                <p className="text-[#CCC] font-semibold">Pasos en Blender:</p>
+                <ol className="list-decimal list-inside space-y-0.5 text-[#AAA]">
+                  <li><code className="text-[#F5A623]">File &gt; Import &gt; SVG (.svg)</code></li>
+                  <li>Selecciona la curva importada</li>
+                  <li>En <strong>Geometry &gt; Extrude</strong> sube el valor para darle grosor 3D sólido</li>
+                </ol>
+              </div>
             </div>
 
             <div className="bg-[#141414] border border-[#222] rounded-lg p-2.5 text-[11px] text-[#777]">
@@ -253,12 +306,12 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
         {/* Action Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[#222]">
           <button
-            onClick={downloadSvg}
-            disabled={generating || !svgContent}
+            onClick={downloadSvgForBlender}
+            disabled={generating || !svg3dContent}
             className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#F5A623] hover:bg-[#E59512] text-[#0A0A0A] font-bold text-xs transition-colors shadow-lg shadow-[#F5A623]/20 disabled:opacity-50"
           >
             <Download size={14} />
-            <span>Descargar SVG Vectorial</span>
+            <span>Descargar SVG (3D / Blender)</span>
           </button>
 
           <button
@@ -272,7 +325,7 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
 
           <button
             onClick={copySvgCode}
-            disabled={generating || !svgContent}
+            disabled={generating || !svg3dContent}
             className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[#161616] hover:bg-[#202020] border border-[#2A2A2A] text-[#AAA] hover:text-[#FAFAFA] text-xs transition-colors sm:col-span-2 disabled:opacity-50"
             title="Copiar código SVG para pegar en Illustrator o Figma"
           >
