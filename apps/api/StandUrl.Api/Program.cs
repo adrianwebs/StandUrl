@@ -119,12 +119,22 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ── Migración automática en dev ──────────────────────────────────────────────
-if (app.Environment.IsDevelopment())
+// ── Migración automática de base de datos ────────────────────────────────────
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await db.Database.MigrateAsync();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        logger.LogInformation("Aplicando migraciones automáticas de Entity Framework Core...");
+        await db.Database.MigrateAsync();
+        logger.LogInformation("Migraciones aplicadas con éxito sobre la base de datos.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Error crítico al aplicar las migraciones de base de datos: {Message}", ex.Message);
+        throw;
+    }
 }
 
 // ── Endpoints ────────────────────────────────────────────────────────────────
