@@ -10,8 +10,8 @@
 #   SSH_PORT               22
 #
 # VARS (no secretos) en GitHub → Settings → Variables:
-#   NEXT_PUBLIC_API_URL      https://api.standurl.com
-#   NEXT_PUBLIC_SITE_URL     https://standurl.com
+#   NEXT_PUBLIC_API_URL      https://apistandurl.webadir.es  (luego https://api.standurl.com)
+#   NEXT_PUBLIC_SITE_URL     https://standurl.webadir.es     (luego https://standurl.com)
 
 name: Web — CD
 
@@ -135,4 +135,4 @@ jobs:
       - name: Smoke test
         run: |
           sleep 10
-          curl -f https://standurl.com/ || exit 1
+          curl -f https://standurl.webadir.es/ || curl -f https://standurl.com/ || exit 1

@@ -155,4 +155,4 @@ stages:
                   inputs:
                     script: |
                       sleep 15
-                      curl -f https://api.standurl.com/health || exit 1
+                      curl -f https://apistandurl.webadir.es/health || curl -f https://api.standurl.com/health || exit 1
