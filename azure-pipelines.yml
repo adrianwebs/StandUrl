@@ -114,8 +114,14 @@ stages:
 
                       cd /docker/clientes/standurl/api
 
-                      docker compose pull --quiet api
-                      docker compose up -d --remove-orphans api
+                      if [ -f docker-compose.prod.yml ]; then
+                        COMPOSE_FILE="docker-compose.prod.yml"
+                      else
+                        COMPOSE_FILE="docker-compose.yml"
+                      fi
+
+                      docker compose -f "$COMPOSE_FILE" pull --quiet api
+                      docker compose -f "$COMPOSE_FILE" up -d --remove-orphans api
 
                       docker image prune -af --filter "until=168h"
                     failOnStdErr: false
