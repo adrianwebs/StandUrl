@@ -7,10 +7,10 @@ import { AdminShell } from './_components/AdminShell'
 
 function StatCard({ label, value, sub }: { label: string; value: number | string; sub?: string }) {
   return (
-    <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-      <p className="text-sm text-[#888] mb-1">{label}</p>
-      <p className="text-3xl font-bold text-[#FAFAFA]">{value.toLocaleString()}</p>
-      {sub && <p className="text-xs text-[#555] mt-1">{sub}</p>}
+    <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-xs hover:shadow-sm transition-shadow">
+      <p className="text-xs font-bold uppercase tracking-wider text-[#A8A29E] mb-1.5">{label}</p>
+      <p className="text-3xl font-extrabold text-[#111827]">{value.toLocaleString()}</p>
+      {sub && <p className="text-xs text-[#78716C] mt-1 font-medium">{sub}</p>}
     </div>
   )
 }
@@ -29,11 +29,11 @@ export default function AdminDashboard() {
 
   return (
     <AdminShell>
-      <div className="p-8">
-        <h1 className="text-2xl font-bold text-[#FAFAFA] mb-6">Dashboard</h1>
+      <div className="p-8 max-w-6xl">
+        <h1 className="text-2xl font-extrabold text-[#111827] mb-6 tracking-tight">Dashboard General</h1>
 
         {error && (
-          <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] text-sm px-4 py-3 rounded-lg mb-6">
+          <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-6">
             {error}
           </div>
         )}
@@ -41,9 +41,9 @@ export default function AdminDashboard() {
         {!stats ? (
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-[#111] border border-[#222] rounded-xl p-6 animate-pulse">
-                <div className="h-3 w-24 bg-[#222] rounded mb-3" />
-                <div className="h-8 w-16 bg-[#222] rounded" />
+              <div key={i} className="bg-white border border-[#E7E5E4] rounded-2xl p-6 animate-pulse">
+                <div className="h-3 w-24 bg-[#F3EFE6] rounded mb-3" />
+                <div className="h-8 w-16 bg-[#F3EFE6] rounded" />
               </div>
             ))}
           </div>
@@ -61,3 +61,4 @@ export default function AdminDashboard() {
     </AdminShell>
   )
 }
+

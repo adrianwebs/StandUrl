@@ -64,5 +64,6 @@ El objeto parece un producto profesional de marca, no una tarjeta NFC genérica.
 - **Nunca** añadir features no incluidas en el MVP (app móvil, IA, CRM, campañas, heatmaps, API pública).
 - El stack está fijado: **Next.js + TypeScript** (frontend), **ASP.NET Core Minimal API** (backend), **PostgreSQL** (DB), **Redis** (caché redirects), **Docker + Traefik** (infra).
 - Pagos: **Stripe** (activar cuando llegue la capa de suscripción, no antes).
-- Emails: **SMTP (MailKit)** vía OVH u otro proveedor SMTP estándar.
 - El CTA principal de la landing es siempre **"Pide tu prototipo gratis"**, no "Comprar".
+- **Identidad Visual y Diseño**: Toda nueva UI debe seguir estrictamente la **Paleta 1 (Warm Cream & Minimalist Light)** detallada en `.agents/design.md`. Prohibido crear pantallas con fondos negros legacy `#0A0A0A` o acentos dorados `#F5A623`. Usar siempre el componente `<Logo />` para logos y favicons oficiales de `public/`.
+

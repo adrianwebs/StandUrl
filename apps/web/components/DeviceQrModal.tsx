@@ -192,26 +192,26 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
   }
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-      <div className="bg-[#111] border border-[#2A2A2A] rounded-2xl p-6 sm:p-7 w-full max-w-xl shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+      <div className="bg-white border border-[#E7E5E4] rounded-3xl p-6 sm:p-7 w-full max-w-xl shadow-2xl animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#222]">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#E7E5E4]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#F5A623]/10 border border-[#F5A623]/20 flex items-center justify-center text-[#F5A623]">
+            <div className="w-8 h-8 rounded-lg bg-[#F3EFE6] border border-[#E5DFD3] flex items-center justify-center text-[#18181B]">
               <QrIcon size={18} />
             </div>
             <div>
-              <h3 className="font-bold text-[#FAFAFA] text-base leading-tight">
+              <h3 className="font-bold text-[#111827] text-base leading-tight">
                 {device.label}
               </h3>
-              <p className="text-xs text-[#777]">
-                Código QR vectorial · Token <span className="font-mono text-[#AAA]">{device.token}</span>
+              <p className="text-xs text-[#78716C]">
+                Código QR vectorial · Token <span className="font-mono font-semibold text-[#111827]">{device.token}</span>
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-[#666] hover:text-[#FAFAFA] transition-colors p-1.5 rounded-lg hover:bg-[#222]"
+            className="text-[#78716C] hover:text-[#111827] transition-colors p-1.5 rounded-lg hover:bg-[#F3EFE6]"
             title="Cerrar"
           >
             <X size={18} />
@@ -221,16 +221,16 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
         {/* QR Preview & Model 3D Notice */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center my-4">
           {/* QR visual container */}
-          <div className="flex flex-col items-center justify-center p-4 bg-[#181818] border border-[#282828] rounded-xl">
+          <div className="flex flex-col items-center justify-center p-4 bg-[#FBFBF9] border border-[#E7E5E4] rounded-2xl">
             <div
-              className={`p-3 rounded-lg ${
+              className={`p-3 rounded-xl ${
                 transparentBg
-                  ? 'bg-[radial-gradient(#333_1px,transparent_1px)] [background-size:8px_8px] bg-[#222]'
-                  : 'bg-white'
-              } shadow-lg transition-colors`}
+                  ? 'bg-[radial-gradient(#CCC_1px,transparent_1px)] [background-size:8px_8px] bg-white border border-[#E7E5E4]'
+                  : 'bg-white border border-[#E7E5E4]'
+              } shadow-sm transition-colors`}
             >
               {generating ? (
-                <div className="w-44 h-44 flex items-center justify-center text-xs text-[#888]">
+                <div className="w-44 h-44 flex items-center justify-center text-xs text-[#78716C]">
                   Generando QR...
                 </div>
               ) : svg3dContent ? (
@@ -242,14 +242,14 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
             </div>
 
             {/* Background toggle */}
-            <div className="flex items-center gap-2 mt-3 text-[11px] text-[#888]">
+            <div className="flex items-center gap-2 mt-3 text-[11px] text-[#78716C]">
               <button
                 type="button"
                 onClick={() => setTransparentBg(prev => !prev)}
-                className={`px-2.5 py-1 rounded-md border text-xs font-medium transition-colors ${
+                className={`px-3 py-1 rounded-lg border text-xs font-semibold transition-colors ${
                   transparentBg
-                    ? 'bg-[#F5A623]/10 border-[#F5A623]/30 text-[#F5A623]'
-                    : 'bg-[#222] border-[#333] text-[#AAA] hover:text-white'
+                    ? 'bg-[#18181B] border-[#18181B] text-white'
+                    : 'bg-white border-[#E7E5E4] text-[#111827] hover:bg-[#F3EFE6]'
                 }`}
               >
                 {transparentBg ? 'Fondo Transparente' : 'Fondo Blanco'}
@@ -259,41 +259,41 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
 
           {/* Details & Info for 3D modeling */}
           <div className="space-y-3 text-xs">
-            <div className="bg-[#181818] border border-[#282828] rounded-xl p-3 space-y-1.5">
-              <div className="flex items-center gap-1.5 text-[#F5A623] font-semibold text-[11px] uppercase tracking-wider">
+            <div className="bg-[#F3EFE6] border border-[#E5DFD3] rounded-2xl p-3.5 space-y-1.5">
+              <div className="flex items-center gap-1.5 text-[#B45309] font-bold text-[11px] uppercase tracking-wider">
                 <Box size={14} />
                 <span>Compatibilidad 3D / Blender</span>
               </div>
-              <p className="text-[#AAA] leading-relaxed text-[11px]">
-                Este SVG está generado con <strong>polígonos 2D cerrados</strong> (sin líneas abiertas ni fondo blanco plano).
+              <p className="text-[#78716C] leading-relaxed text-[11px]">
+                Este SVG está generado con <strong className="text-[#111827]">polígonos 2D cerrados</strong> (sin líneas abiertas ni fondo blanco plano).
               </p>
-              <div className="bg-[#0F0F0F] border border-[#262626] rounded-lg p-2 text-[10.5px] text-[#888] space-y-1">
-                <p className="text-[#CCC] font-semibold">Pasos en Blender:</p>
-                <ol className="list-decimal list-inside space-y-0.5 text-[#AAA]">
-                  <li><code className="text-[#F5A623]">File &gt; Import &gt; SVG (.svg)</code></li>
+              <div className="bg-white border border-[#E5DFD3] rounded-xl p-2.5 text-[10.5px] text-[#78716C] space-y-1">
+                <p className="text-[#111827] font-bold">Pasos en Blender:</p>
+                <ol className="list-decimal list-inside space-y-0.5 text-[#78716C]">
+                  <li><code className="text-[#B45309] font-semibold">File &gt; Import &gt; SVG (.svg)</code></li>
                   <li>Selecciona la curva importada</li>
-                  <li>En <strong>Geometry &gt; Extrude</strong> sube el valor para darle grosor 3D sólido</li>
+                  <li>En <strong className="text-[#111827]">Geometry &gt; Extrude</strong> sube el valor para darle grosor 3D sólido</li>
                 </ol>
               </div>
             </div>
 
-            <div className="bg-[#141414] border border-[#222] rounded-lg p-2.5 text-[11px] text-[#777]">
-              <div className="font-mono text-[#AAA] truncate mb-1" title={redirectUrl}>
+            <div className="bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl p-2.5 text-[11px] text-[#78716C]">
+              <div className="font-mono text-[#111827] font-medium truncate mb-1" title={redirectUrl}>
                 {redirectUrl}
               </div>
-              <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#222]">
+              <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#E7E5E4]">
                 <button
                   onClick={copyRedirectLink}
-                  className="inline-flex items-center gap-1 text-[#F5A623] hover:underline text-[11px]"
+                  className="inline-flex items-center gap-1 text-[#B45309] font-semibold hover:underline text-[11px]"
                 >
-                  {copiedLink ? <Check size={11} className="text-green-400" /> : <Copy size={11} />}
+                  {copiedLink ? <Check size={11} className="text-[#16A34A]" /> : <Copy size={11} />}
                   <span>{copiedLink ? 'Copiado' : 'Copiar URL'}</span>
                 </button>
                 <a
                   href={redirectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[#888] hover:text-[#FAFAFA] text-[11px]"
+                  className="inline-flex items-center gap-1 text-[#78716C] hover:text-[#111827] text-[11px] font-medium"
                 >
                   <span>Probar</span>
                   <ExternalLink size={11} />
@@ -304,11 +304,11 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[#222]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[#E7E5E4]">
           <button
             onClick={downloadSvgForBlender}
             disabled={generating || !svg3dContent}
-            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#F5A623] hover:bg-[#E59512] text-[#0A0A0A] font-bold text-xs transition-colors shadow-lg shadow-[#F5A623]/20 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#18181B] hover:bg-[#27272A] text-white font-bold text-xs transition-colors shadow-md disabled:opacity-50"
           >
             <Download size={14} />
             <span>Descargar SVG (3D / Blender)</span>
@@ -317,22 +317,22 @@ export function DeviceQrModal({ device, onClose, siteUrl }: DeviceQrModalProps) 
           <button
             onClick={downloadPng}
             disabled={generating || !pngDataUrl}
-            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#1F1F1F] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#444] text-[#FAFAFA] font-semibold text-xs transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white hover:bg-[#F3EFE6] border border-[#E7E5E4] text-[#111827] font-bold text-xs transition-colors disabled:opacity-50"
           >
-            <Download size={14} className="text-[#888]" />
+            <Download size={14} className="text-[#78716C]" />
             <span>Descargar PNG (1024px)</span>
           </button>
 
           <button
             onClick={copySvgCode}
             disabled={generating || !svg3dContent}
-            className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[#161616] hover:bg-[#202020] border border-[#2A2A2A] text-[#AAA] hover:text-[#FAFAFA] text-xs transition-colors sm:col-span-2 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#FBFBF9] hover:bg-[#F3EFE6] border border-[#E7E5E4] text-[#78716C] hover:text-[#111827] text-xs transition-colors sm:col-span-2 disabled:opacity-50 font-medium"
             title="Copiar código SVG para pegar en Illustrator o Figma"
           >
             {copiedSvg ? (
               <>
-                <Check size={13} className="text-green-400" />
-                <span className="text-green-400 font-medium">¡Código SVG copiado al portapapeles!</span>
+                <Check size={13} className="text-[#16A34A]" />
+                <span className="text-[#16A34A] font-semibold">¡Código SVG copiado al portapapeles!</span>
               </>
             ) : (
               <>

@@ -24,24 +24,24 @@ function CreateDeviceModal({ businessId, onClose, onCreated }: { businessId: str
   }
 
   return (
-    <div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4'>
-      <div className='bg-[#111] border border-[#222] rounded-2xl p-8 w-full max-w-md'>
-        <h2 className='text-lg font-semibold text-[#FAFAFA] mb-5'>Nuevo dispositivo</h2>
-        {error && <div className='bg-red-900/20 border border-red-500/30 text-red-400 text-sm px-3 py-2 rounded-lg mb-4'>{error}</div>}
+    <div className='fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4'>
+      <div className='bg-white border border-[#E7E5E4] rounded-3xl p-8 w-full max-w-md shadow-2xl'>
+        <h2 className='text-xl font-extrabold text-[#111827] mb-5 tracking-tight'>Nuevo dispositivo</h2>
+        {error && <div className='bg-red-50 border border-red-200 text-red-700 text-sm px-3.5 py-2.5 rounded-xl mb-4'>{error}</div>}
         <form onSubmit={handleSubmit} className='space-y-4'>
-          <div><label className='block text-sm text-[#888] mb-1'>Etiqueta (ej: Mesa 1)</label>
+          <div><label className='block text-xs font-semibold uppercase tracking-wider text-[#78716C] mb-1.5'>Etiqueta (ej: Mesa 1)</label>
             <input required value={form.label} onChange={e => setForm(f => ({ ...f, label: e.target.value }))}
-              className='w-full bg-[#1A1A1A] border border-[#333] rounded-lg px-4 py-2.5 text-[#FAFAFA] focus:outline-none focus:border-[#F5A623]' placeholder='Mesa 1' /></div>
-          <div><label className='block text-sm text-[#888] mb-1'>URL de destino</label>
+              className='w-full bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-4 py-2.5 text-sm text-[#111827] focus:outline-none focus:border-[#18181B]' placeholder='Mesa 1' /></div>
+          <div><label className='block text-xs font-semibold uppercase tracking-wider text-[#78716C] mb-1.5'>URL de destino</label>
             <input required type='url' value={form.destinationUrl} onChange={e => setForm(f => ({ ...f, destinationUrl: e.target.value }))}
-              className='w-full bg-[#1A1A1A] border border-[#333] rounded-lg px-4 py-2.5 text-[#FAFAFA] focus:outline-none focus:border-[#F5A623]' placeholder='https://g.page/r/.../review' /></div>
-          <div><label className='block text-sm text-[#888] mb-1'>Tipo de modelo</label>
+              className='w-full bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-4 py-2.5 text-sm text-[#111827] focus:outline-none focus:border-[#18181B]' placeholder='https://g.page/r/.../review' /></div>
+          <div><label className='block text-xs font-semibold uppercase tracking-wider text-[#78716C] mb-1.5'>Tipo de modelo</label>
             <select value={form.modelType} onChange={e => setForm(f => ({ ...f, modelType: e.target.value }))}
-              className='w-full bg-[#1A1A1A] border border-[#333] rounded-lg px-3 py-2.5 text-[#FAFAFA] focus:outline-none focus:border-[#F5A623]'>
+              className='w-full bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-3 py-2.5 text-sm text-[#111827] focus:outline-none focus:border-[#18181B]'>
               {MODEL_TYPES.map(m => <option key={m} value={m}>{m}</option>)}</select></div>
           <div className='flex gap-3 pt-2'>
-            <button type='button' onClick={onClose} className='flex-1 py-2.5 rounded-lg border border-[#333] text-[#888] hover:text-[#FAFAFA] text-sm'>Cancelar</button>
-            <button type='submit' disabled={loading} className='flex-1 py-2.5 rounded-lg bg-[#F5A623] hover:bg-[#C47D0E] text-[#0A0A0A] font-bold disabled:opacity-50 text-sm'>{loading ? 'Creando...' : 'Crear'}</button>
+            <button type='button' onClick={onClose} className='flex-1 py-2.5 rounded-xl border border-[#E7E5E4] text-[#78716C] hover:text-[#111827] hover:bg-[#F3EFE6] text-sm font-semibold transition-colors'>Cancelar</button>
+            <button type='submit' disabled={loading} className='flex-1 py-2.5 rounded-xl bg-[#18181B] hover:bg-[#27272A] text-white font-bold disabled:opacity-50 text-sm transition-colors shadow-sm'>{loading ? 'Creando...' : 'Crear'}</button>
           </div>
         </form>
       </div>
@@ -76,48 +76,48 @@ function DeviceRow({
   }
 
   return (
-    <tr className='border-b border-[#1A1A1A] hover:bg-[#1A1A1A] transition-colors'>
+    <tr className='border-b border-[#E7E5E4] last:border-b-0 hover:bg-[#F3EFE6]/40 transition-colors'>
       <td className='px-5 py-3.5'>
-        <p className='font-medium text-[#FAFAFA] text-sm'>{device.label}</p>
-        <p className='text-xs text-[#555]'>{device.modelType}</p>
+        <p className='font-bold text-[#111827] text-sm'>{device.label}</p>
+        <p className='text-xs text-[#78716C] capitalize'>{device.modelType}</p>
       </td>
       <td className='px-4 py-3.5'>
-        <code className='text-xs bg-[#1A1A1A] border border-[#222] px-2 py-1 rounded text-[#F5A623] font-mono'>
+        <code className='text-xs bg-[#F3EFE6] border border-[#E5DFD3] px-2.5 py-1 rounded-lg text-[#18181B] font-mono font-bold'>
           {device.token}
         </code>
       </td>
       <td className='px-4 py-3.5 max-w-xs'>
         {editing ? (
           <div className='flex gap-2'>
-            <input value={url} onChange={e => setUrl(e.target.value)} className='flex-1 bg-[#0A0A0A] border border-[#F5A623] rounded px-2 py-1 text-xs text-[#FAFAFA] focus:outline-none' autoFocus />
-            <button onClick={saveUrl} disabled={saving} className='text-xs text-green-400 px-2'>{saving ? '...' : 'OK'}</button>
-            <button onClick={() => { setUrl(device.destinationUrl); setEditing(false) }} className='text-xs text-[#888] px-1'>X</button>
+            <input value={url} onChange={e => setUrl(e.target.value)} className='flex-1 bg-white border border-[#18181B] rounded-lg px-2.5 py-1 text-xs text-[#111827] focus:outline-none' autoFocus />
+            <button onClick={saveUrl} disabled={saving} className='text-xs font-bold text-green-700 hover:text-green-800 px-2'>{saving ? '...' : 'OK'}</button>
+            <button onClick={() => { setUrl(device.destinationUrl); setEditing(false) }} className='text-xs text-[#78716C] hover:text-[#111827] px-1'>X</button>
           </div>
         ) : (
-          <button onClick={() => setEditing(true)} className='text-xs text-[#888] hover:text-[#FAFAFA] text-left group w-full' title={device.destinationUrl}>
+          <button onClick={() => setEditing(true)} className='text-xs text-[#78716C] hover:text-[#111827] text-left group w-full font-medium' title={device.destinationUrl}>
             <span className='truncate block max-w-[200px]'>{device.destinationUrl}</span>
-            <span className='text-[#F5A623] opacity-0 group-hover:opacity-100 text-xs'> editar</span>
+            <span className='text-[#B45309] font-semibold opacity-0 group-hover:opacity-100 text-xs'> editar</span>
           </button>
         )}
       </td>
-      <td className='px-4 py-3.5 text-center text-[#888] text-sm'>{(device.interactionCount ?? 0).toLocaleString()}</td>
-      <td className='px-4 py-3.5 text-center text-xs text-[#555]'>{device.lastScan ? new Date(device.lastScan).toLocaleDateString('es-ES') : '--'}</td>
-      <td className='px-4 py-3.5 text-center'><button onClick={toggleStatus}><span className={device.status === 'active' ? 'inline-block w-2.5 h-2.5 rounded-full bg-green-500' : 'inline-block w-2.5 h-2.5 rounded-full bg-red-500'} /></button></td>
+      <td className='px-4 py-3.5 text-center text-[#111827] font-bold text-sm'>{(device.interactionCount ?? 0).toLocaleString()}</td>
+      <td className='px-4 py-3.5 text-center text-xs text-[#78716C] font-medium'>{device.lastScan ? new Date(device.lastScan).toLocaleDateString('es-ES') : '--'}</td>
+      <td className='px-4 py-3.5 text-center'><button onClick={toggleStatus}><span className={device.status === 'active' ? 'inline-block w-2.5 h-2.5 rounded-full bg-[#16A34A]' : 'inline-block w-2.5 h-2.5 rounded-full bg-[#DC2626]'} /></button></td>
       <td className='px-4 py-3.5 text-right'>
         <div className='flex items-center justify-end gap-2'>
           <button
             onClick={() => onViewQr(device)}
-            className='inline-flex items-center gap-1 text-xs bg-[#1A1A1A] hover:bg-[#252525] border border-[#333] hover:border-[#F5A623]/50 text-[#FAFAFA] hover:text-[#F5A623] px-2.5 py-1 rounded-lg transition-colors font-medium'
+            className='inline-flex items-center gap-1 text-xs bg-[#FBFBF9] hover:bg-[#F3EFE6] border border-[#E7E5E4] hover:border-[#D6D3D1] text-[#111827] px-2.5 py-1.5 rounded-lg transition-colors font-bold'
             title='Ver QR y descargar vector SVG para modelado 3D'
           >
-            <QrCode size={13} className='text-[#F5A623]' />
+            <QrCode size={13} className='text-[#B45309]' />
             <span>QR / SVG</span>
           </button>
           <a
             href={'/t/' + device.token + '?src=qr'}
             target='_blank'
             rel='noopener noreferrer'
-            className='text-xs text-[#555] hover:text-[#FAFAFA] px-1.5 py-1'
+            className='text-xs text-[#78716C] hover:text-[#111827] px-1.5 py-1'
             title='Probar enlace de redirección'
           >
             <ExternalLink size={13} />
@@ -172,61 +172,61 @@ export default function BusinessDetailPage() {
 
   return (
     <AdminShell>
-      <div className='p-8'>
-        <div className='flex items-center gap-2 text-sm text-[#555] mb-6'>
-          <Link href='/admin/businesses' className='hover:text-[#F5A623]'>Negocios</Link>
+      <div className='p-8 max-w-6xl'>
+        <div className='flex items-center gap-2 text-sm text-[#78716C] mb-6 font-medium'>
+          <Link href='/admin/businesses' className='hover:text-[#111827]'>Negocios</Link>
           <span>/</span>
-          <span className='text-[#888]'>{business?.name ?? '...'}</span>
+          <span className='text-[#111827] font-semibold'>{business?.name ?? '...'}</span>
         </div>
-        {error && <div className='bg-red-900/20 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-lg mb-6'>{error}</div>}
-        {resendSuccess && <div className='bg-green-900/30 border border-green-500/40 text-green-300 text-sm px-4 py-3 rounded-lg mb-6'>✅ {resendSuccess}</div>}
-        {resendError && <div className='bg-red-900/30 border border-red-500/40 text-red-300 text-sm px-4 py-3 rounded-lg mb-6'>❌ {resendError}</div>}
+        {error && <div className='bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-6'>{error}</div>}
+        {resendSuccess && <div className='bg-green-50 border border-green-200 text-green-800 text-sm px-4 py-3 rounded-xl mb-6'>✅ {resendSuccess}</div>}
+        {resendError && <div className='bg-red-50 border border-red-200 text-red-800 text-sm px-4 py-3 rounded-xl mb-6'>❌ {resendError}</div>}
         {loading ? (
           <div className='space-y-4 animate-pulse'>
-            <div className='h-24 bg-[#111] border border-[#222] rounded-xl' />
-            <div className='h-48 bg-[#111] border border-[#222] rounded-xl' />
+            <div className='h-24 bg-white border border-[#E7E5E4] rounded-3xl' />
+            <div className='h-48 bg-white border border-[#E7E5E4] rounded-3xl' />
           </div>
         ) : business ? (
           <>
-            <div className='bg-[#111] border border-[#222] rounded-xl p-6 mb-6'>
+            <div className='bg-white border border-[#E7E5E4] rounded-3xl p-6 sm:p-7 mb-6 shadow-xs'>
               <div className='flex flex-col sm:flex-row sm:items-start justify-between gap-4'>
                 <div>
-                  <h1 className='text-xl font-bold text-[#FAFAFA]'>{business.name}</h1>
-                  <p className='text-sm text-[#555] mt-0.5'>{business.email}</p>
+                  <h1 className='text-2xl font-extrabold text-[#111827] tracking-tight'>{business.name}</h1>
+                  <p className='text-sm text-[#78716C] mt-0.5'>{business.email}</p>
                 </div>
                 <div className='flex flex-wrap items-center gap-2'>
-                  <span className={business.plan === 'pro' ? 'text-xs font-medium px-2 py-1 rounded-full bg-[#F5A623]/10 text-[#F5A623]' : 'text-xs font-medium px-2 py-1 rounded-full bg-[#333] text-[#888]'}>{business.plan}</span>
-                  <span className='text-xs font-medium px-2 py-1 rounded-full bg-[#333] text-[#888] capitalize'>{business.sector}</span>
-                  <span className={business.isActive ? 'text-xs font-medium px-2 py-1 rounded-full bg-green-500/10 text-green-400' : 'text-xs font-medium px-2 py-1 rounded-full bg-red-500/10 text-red-400'}>{business.isActive ? 'Activo' : 'Inactivo'}</span>
+                  <span className={business.plan === 'pro' ? 'text-xs font-bold px-2.5 py-1 rounded-full bg-[#F3EFE6] border border-[#E5DFD3] text-[#B45309]' : 'text-xs font-medium px-2.5 py-1 rounded-full bg-[#FBFBF9] border border-[#E7E5E4] text-[#78716C]'}>{business.plan}</span>
+                  <span className='text-xs font-medium px-2.5 py-1 rounded-full bg-[#FBFBF9] border border-[#E7E5E4] text-[#78716C] capitalize'>{business.sector}</span>
+                  <span className={business.isActive ? 'text-xs font-bold px-2.5 py-1 rounded-full bg-green-50 text-green-700 border border-green-200' : 'text-xs font-bold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200'}>{business.isActive ? 'Activo' : 'Inactivo'}</span>
                   <button
                     onClick={handleResendAccess}
                     disabled={resending}
-                    className='ml-2 inline-flex items-center gap-1.5 bg-[#1F1F1F] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#F5A623]/40 text-[#FAFAFA] hover:text-[#F5A623] text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50'
+                    className='ml-2 inline-flex items-center gap-1.5 bg-[#FBFBF9] hover:bg-[#F3EFE6] border border-[#E7E5E4] text-[#111827] text-xs font-bold px-3 py-1.5 rounded-xl transition-colors disabled:opacity-50'
                     title='Generar nueva contraseña temporal y enviar email de acceso'
                   >
                     <span>{resending ? 'Enviando email...' : '✉️ Reenviar email de acceso'}</span>
                   </button>
                 </div>
               </div>
-              <div className='mt-4 grid grid-cols-3 gap-4 pt-4 border-t border-[#1A1A1A]'>
-                <div><p className='text-xs text-[#555]'>Dispositivos</p><p className='text-lg font-bold text-[#FAFAFA]'>{business.deviceCount ?? 0}</p></div>
-                <div><p className='text-xs text-[#555]'>Escaneos totales</p><p className='text-lg font-bold text-[#FAFAFA]'>{(business.totalScans ?? 0).toLocaleString()}</p></div>
-                <div><p className='text-xs text-[#555]'>Alta</p><p className='text-sm text-[#888]'>{new Date(business.createdAt).toLocaleDateString('es-ES')}</p></div>
+              <div className='mt-4 grid grid-cols-3 gap-4 pt-4 border-t border-[#E7E5E4]'>
+                <div><p className='text-xs uppercase font-bold text-[#A8A29E]'>Dispositivos</p><p className='text-xl font-extrabold text-[#111827] mt-0.5'>{business.deviceCount ?? 0}</p></div>
+                <div><p className='text-xs uppercase font-bold text-[#A8A29E]'>Escaneos totales</p><p className='text-xl font-extrabold text-[#111827] mt-0.5'>{(business.totalScans ?? 0).toLocaleString()}</p></div>
+                <div><p className='text-xs uppercase font-bold text-[#A8A29E]'>Fecha de Alta</p><p className='text-sm text-[#78716C] font-semibold mt-1'>{new Date(business.createdAt).toLocaleDateString('es-ES')}</p></div>
               </div>
             </div>
             <div className='flex items-center justify-between mb-4'>
-              <h2 className='text-lg font-semibold text-[#FAFAFA]'>Dispositivos</h2>
-              <button onClick={() => setShowModal(true)} className='bg-[#F5A623] hover:bg-[#C47D0E] text-[#0A0A0A] font-bold px-4 py-2 rounded-lg text-sm'>+ Nuevo dispositivo</button>
+              <h2 className='text-xl font-extrabold text-[#111827] tracking-tight'>Dispositivos NFC</h2>
+              <button onClick={() => setShowModal(true)} className='bg-[#18181B] hover:bg-[#27272A] text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-sm cursor-pointer'>+ Nuevo dispositivo</button>
             </div>
-            <div className='bg-[#111] border border-[#222] rounded-xl overflow-hidden'>
+            <div className='bg-white border border-[#E7E5E4] rounded-2xl overflow-hidden shadow-xs'>
               <table className='w-full text-sm'>
-                <thead><tr className='border-b border-[#222] text-[#555] text-xs uppercase'>
-                  <th className='text-left px-5 py-3'>Etiqueta</th><th className='text-left px-4 py-3'>Token</th>
-                  <th className='text-left px-4 py-3'>URL destino</th><th className='text-center px-4 py-3'>Escaneos</th>
-                  <th className='text-center px-4 py-3'>Ultimo</th><th className='text-center px-4 py-3'>Estado</th><th className='px-4 py-3 text-right'>Acciones</th>
+                <thead><tr className='border-b border-[#E7E5E4] bg-[#FBFBF9] text-[#78716C] text-xs uppercase tracking-wider font-semibold'>
+                  <th className='text-left px-5 py-3.5'>Etiqueta</th><th className='text-left px-4 py-3.5'>Token</th>
+                  <th className='text-left px-4 py-3.5'>URL destino</th><th className='text-center px-4 py-3.5'>Escaneos</th>
+                  <th className='text-center px-4 py-3.5'>Último</th><th className='text-center px-4 py-3.5'>Estado</th><th className='px-4 py-3.5 text-right'>Acciones</th>
                 </tr></thead>
                 <tbody>
-                  {devices.length === 0 && <tr><td colSpan={7} className='text-center py-10 text-[#555]'>Sin dispositivos. Crea el primero.</td></tr>}
+                  {devices.length === 0 && <tr><td colSpan={7} className='text-center py-10 text-[#78716C]'>Sin dispositivos. Crea el primero.</td></tr>}
                   {devices.map(d => (
                     <DeviceRow
                       key={d.id}
@@ -251,3 +251,4 @@ export default function BusinessDetailPage() {
     </AdminShell>
   )
 }
+

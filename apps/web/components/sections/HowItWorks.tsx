@@ -29,10 +29,10 @@ export default function HowItWorks() {
     <section className="py-24 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[#FAFAFA] mb-4">
+          <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-[#111827] mb-4 tracking-tight">
             Tan simple como parece
           </h2>
-          <p className="text-[#888] text-lg max-w-xl mx-auto">
+          <p className="text-[#78716C] text-lg max-w-xl mx-auto">
             Tres pasos. Sin instalaciones. Sin contraseñas. Sin fricciones.
           </p>
         </div>
@@ -41,19 +41,19 @@ export default function HowItWorks() {
           {steps.map((step) => {
             const Icon = step.icon
             return (
-              <div key={step.number} className="relative bg-[#111] border border-[#222] rounded-2xl p-8 hover:border-[#333] transition-colors">
+              <div key={step.number} className="relative bg-white border border-[#E7E5E4] rounded-2xl p-8 hover:border-[#D6D3D1] shadow-sm hover:shadow-md transition-all">
                 {/* Número grande */}
-                <span className="font-heading text-7xl font-bold text-[#1A1A1A] absolute top-6 right-6 leading-none select-none">
+                <span className="font-heading text-7xl font-black text-[#F3EFE6] absolute top-6 right-6 leading-none select-none">
                   {step.number}
                 </span>
                 {/* Icono */}
-                <div className="w-12 h-12 rounded-xl bg-[#F5A623]/10 border border-[#F5A623]/20 flex items-center justify-center mb-6">
-                  <Icon size={22} className="text-[#F5A623]" />
+                <div className="w-12 h-12 rounded-xl bg-[#F3EFE6] border border-[#E5DFD3] flex items-center justify-center mb-6 shadow-xs">
+                  <Icon size={22} className="text-[#18181B]" />
                 </div>
-                <h3 className="font-heading text-lg font-bold text-[#FAFAFA] mb-3">
+                <h3 className="font-heading text-lg font-bold text-[#111827] mb-3">
                   {step.title}
                 </h3>
-                <p className="text-[#888] text-sm leading-relaxed">{step.description}</p>
+                <p className="text-[#78716C] text-sm leading-relaxed">{step.description}</p>
               </div>
             )
           })}
@@ -62,3 +62,4 @@ export default function HowItWorks() {
     </section>
   )
 }
+

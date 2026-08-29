@@ -34,29 +34,29 @@ export default function FaqSection() {
   const [open, setOpen] = useState<number | null>(null)
 
   return (
-    <section className="py-24 px-4 sm:px-6 bg-[#0A0A0A]">
+    <section className="py-24 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[#FAFAFA] mb-4">
+          <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-[#111827] mb-4 tracking-tight">
             Preguntas frecuentes
           </h2>
         </div>
 
         <div className="space-y-3">
           {faqs.map((faq, i) => (
-            <div key={i} className="bg-[#111] border border-[#222] rounded-xl overflow-hidden">
+            <div key={i} className="bg-white border border-[#E7E5E4] rounded-xl overflow-hidden shadow-xs hover:border-[#D6D3D1] transition-colors">
               <button
                 onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left hover:bg-[#1A1A1A] transition-colors"
+                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left hover:bg-[#F3EFE6]/50 transition-colors"
               >
-                <span className="font-medium text-[#FAFAFA] text-sm sm:text-base">{faq.q}</span>
+                <span className="font-semibold text-[#111827] text-sm sm:text-base">{faq.q}</span>
                 <ChevronDown
                   size={18}
-                  className={`text-[#888] shrink-0 transition-transform duration-200 ${open === i ? 'rotate-180' : ''}`}
+                  className={`text-[#78716C] shrink-0 transition-transform duration-200 ${open === i ? 'rotate-180' : ''}`}
                 />
               </button>
               {open === i && (
-                <div className="px-6 pb-5 text-sm text-[#888] leading-relaxed border-t border-[#222] pt-4">
+                <div className="px-6 pb-5 text-sm text-[#78716C] leading-relaxed border-t border-[#E7E5E4] pt-4">
                   {faq.a}
                 </div>
               )}
@@ -67,3 +67,4 @@ export default function FaqSection() {
     </section>
   )
 }
+

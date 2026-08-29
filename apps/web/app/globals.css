@@ -1,17 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paleta StandUrl */
-  --color-bg: #0A0A0A;
-  --color-surface: #111111;
-  --color-surface-2: #1A1A1A;
-  --color-accent: #F5A623;
-  --color-accent-dim: #C47D0E;
-  --color-text: #FAFAFA;
-  --color-text-muted: #888888;
-  --color-success: #22C55E;
-  --color-error: #EF4444;
-  --color-border: #222222;
+  /* Paleta StandUrl - Warm Cream & Minimalist Light */
+  --color-bg: #FBFBF9;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F3EFE6;
+  --color-cream: #F3EFE6;
+  --color-cream-dim: #E5DFD3;
+  --color-accent: #18181B;
+  --color-accent-dim: #27272A;
+  --color-accent-amber: #B45309;
+  --color-accent-amber-light: #FDE68A;
+  --color-text: #111827;
+  --color-text-muted: #78716C;
+  --color-success: #16A34A;
+  --color-error: #DC2626;
+  --color-border: #E7E5E4;
+  --color-border-dark: #D6D3D1;
 
   /* Tipografía */
   --font-sans: var(--font-inter), system-ui, sans-serif;
@@ -29,21 +34,21 @@ html {
 }
 
 body {
-  background-color: #0A0A0A;
-  color: #FAFAFA;
+  background-color: #FBFBF9;
+  color: #111827;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar discreta en dark mode */
+/* Scrollbar estética */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #111; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #555; }
+::-webkit-scrollbar-track { background: #FBFBF9; }
+::-webkit-scrollbar-thumb { background: #D6D3D1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #A8A29E; }
 
-/* Selección de texto con color de marca */
+/* Selección de texto con toque cremoso de marca */
 ::selection {
-  background: #F5A623;
-  color: #0A0A0A;
+  background: #F3EFE6;
+  color: #18181B;
 }

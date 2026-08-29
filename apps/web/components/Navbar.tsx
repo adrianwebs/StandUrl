@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { clsx } from 'clsx'
+import Logo from '@/components/Logo'
 
 const navLinks = [
   { href: '/como-funciona', label: 'Cómo funciona' },
@@ -31,20 +32,20 @@ export default function Navbar() {
       className={clsx(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         scrolled
-          ? 'bg-[#0A0A0A]/95 backdrop-blur-md border-b border-[#222]'
+          ? 'bg-[#FBFBF9]/90 backdrop-blur-md border-b border-[#E7E5E4] shadow-xs'
           : 'bg-transparent'
       )}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="font-heading text-xl font-bold text-[#F5A623] tracking-tight">
-          Stand<span className="text-[#FAFAFA]">Url</span>
+        <Link href="/" className="inline-flex items-center gap-2">
+          <Logo variant="horizontal" theme="dark" height={28} priority />
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6 text-sm text-[#888]">
+        <nav className="hidden md:flex items-center gap-6 text-sm text-[#78716C]">
           {navLinks.map((l) => (
-            <Link key={l.href} href={l.href} className="hover:text-[#FAFAFA] transition-colors">
+            <Link key={l.href} href={l.href} className="hover:text-[#111827] font-medium transition-colors">
               {l.label}
             </Link>
           ))}
@@ -55,16 +56,16 @@ export default function Navbar() {
             onMouseEnter={() => setSectorsOpen(true)}
             onMouseLeave={() => setSectorsOpen(false)}
           >
-            <button className="flex items-center gap-1 hover:text-[#FAFAFA] transition-colors">
+            <button className="flex items-center gap-1 hover:text-[#111827] font-medium transition-colors">
               Sectores <ChevronDown size={14} />
             </button>
             {sectorsOpen && (
-              <div className="absolute top-full left-0 mt-2 w-52 bg-[#111] border border-[#222] rounded-lg py-1 shadow-xl">
+              <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-[#E7E5E4] rounded-xl py-1.5 shadow-xl">
                 {sectorLinks.map((l) => (
                   <Link
                     key={l.href}
                     href={l.href}
-                    className="block px-4 py-2 text-sm text-[#888] hover:text-[#FAFAFA] hover:bg-[#1A1A1A] transition-colors"
+                    className="block px-4 py-2 text-sm text-[#78716C] hover:text-[#111827] hover:bg-[#F3EFE6] transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -73,13 +74,13 @@ export default function Navbar() {
             )}
           </div>
 
-          <Link href="/precios" className="hover:text-[#FAFAFA] transition-colors">
+          <Link href="/precios" className="hover:text-[#111827] font-medium transition-colors">
             Precios
           </Link>
 
           <Link
             href="/login"
-            className="text-xs text-[#AAA] hover:text-[#FAFAFA] border border-[#333] hover:border-[#F5A623]/50 px-3 py-1.5 rounded-lg transition-colors"
+            className="text-xs text-[#78716C] hover:text-[#111827] border border-[#E7E5E4] hover:border-[#18181B] bg-white hover:bg-[#F3EFE6] px-3.5 py-1.5 rounded-lg transition-colors font-medium"
           >
             Área clientes
           </Link>
@@ -89,7 +90,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/prototipo-gratis"
-            className="inline-flex items-center gap-2 bg-[#F5A623] text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-[#C47D0E] transition-colors"
+            className="inline-flex items-center gap-2 bg-[#18181B] text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-[#27272A] transition-all shadow-sm"
           >
             Pide tu prototipo gratis
           </Link>
@@ -97,7 +98,7 @@ export default function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden text-[#888] hover:text-[#FAFAFA]"
+          className="md:hidden text-[#78716C] hover:text-[#111827] p-1.5 rounded-lg hover:bg-[#F3EFE6]"
           onClick={() => setOpen(!open)}
           aria-label="Menú"
         >
@@ -107,24 +108,24 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-[#111] border-t border-[#222] px-4 py-4 flex flex-col gap-4">
+        <div className="md:hidden bg-[#FBFBF9] border-t border-[#E7E5E4] px-4 py-4 flex flex-col gap-4 shadow-lg">
           {navLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="text-[#888] hover:text-[#FAFAFA] text-sm"
+              className="text-[#78716C] hover:text-[#111827] font-medium text-sm"
             >
               {l.label}
             </Link>
           ))}
-          <div className="text-xs text-[#555] uppercase tracking-wider mt-1">Sectores</div>
+          <div className="text-xs text-[#A8A29E] uppercase tracking-wider mt-1 font-semibold">Sectores</div>
           {sectorLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="text-[#888] hover:text-[#FAFAFA] text-sm pl-2"
+              className="text-[#78716C] hover:text-[#111827] text-sm pl-2"
             >
               {l.label}
             </Link>
@@ -132,21 +133,21 @@ export default function Navbar() {
           <Link
             href="/precios"
             onClick={() => setOpen(false)}
-            className="text-[#888] hover:text-[#FAFAFA] text-sm"
+            className="text-[#78716C] hover:text-[#111827] font-medium text-sm"
           >
             Precios
           </Link>
           <Link
             href="/login"
             onClick={() => setOpen(false)}
-            className="text-[#AAA] hover:text-[#FAFAFA] text-sm py-1"
+            className="text-[#78716C] hover:text-[#111827] text-sm py-1 font-medium"
           >
             Área clientes
           </Link>
           <Link
             href="/prototipo-gratis"
             onClick={() => setOpen(false)}
-            className="bg-[#F5A623] text-black text-sm font-semibold px-4 py-2.5 rounded-lg text-center hover:bg-[#C47D0E] transition-colors"
+            className="bg-[#18181B] text-white text-sm font-semibold px-4 py-2.5 rounded-xl text-center hover:bg-[#27272A] transition-colors"
           >
             Pide tu prototipo gratis
           </Link>
@@ -155,3 +156,4 @@ export default function Navbar() {
     </header>
   )
 }
+

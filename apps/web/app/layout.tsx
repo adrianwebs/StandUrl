@@ -31,6 +31,17 @@ export const metadata: Metadata = {
     'dispositivo nfc reseñas negocio',
     'aumentar reseñas google negocio local',
   ],
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   openGraph: {
     type: 'website',
     locale: 'es_ES',
@@ -52,8 +63,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0A0A0A',
-  colorScheme: 'dark',
+  themeColor: '#FBFBF9',
+  colorScheme: 'light',
 }
 
 export default function RootLayout({
@@ -63,7 +74,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning className={`${inter.variable} ${geist.variable}`}>
-      <body className="min-h-screen bg-[#0A0A0A] text-[#FAFAFA] antialiased">
+      <body className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] antialiased">
         <AuthProvider>
           {children}
         </AuthProvider>
