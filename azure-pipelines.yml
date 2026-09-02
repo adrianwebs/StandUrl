@@ -7,14 +7,15 @@ trigger:
       - apps/api/**
       - azure-pipelines.yml
 
+# Sin filtro de rutas a proposito: el check que este pipeline publica en los PR
+# de GitHub es obligatorio para el auto-merge. Con 'paths', un PR que no toque
+# apps/api no dispararia el pipeline, el check nunca llegaria a GitHub y el PR
+# quedaria bloqueado. El stage CI es rapido; Docker y Deploy siguen limitados a
+# main por sus propias condiciones.
 pr:
   branches:
     include:
       - main
-  paths:
-    include:
-      - apps/api/**
-      - azure-pipelines.yml
 
 variables:
   dotnetVersion: '9.0.x'

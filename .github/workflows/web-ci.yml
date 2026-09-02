@@ -1,11 +1,11 @@
 name: Web — CI
 
+# Sin filtro de rutas a proposito: este check es obligatorio en la ruleset de
+# 'main'. Un trigger con 'paths' no se ejecuta cuando el PR no toca esas rutas,
+# el check nunca reporta y el PR queda bloqueado para siempre.
 on:
   pull_request:
     branches: ['main']
-    paths:
-      - 'apps/web/**'
-      - '.github/workflows/web-ci.yml'
 
 defaults:
   run:

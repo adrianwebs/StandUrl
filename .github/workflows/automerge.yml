@@ -1,0 +1,49 @@
+name: Auto-merge
+
+# Activa el auto-merge nativo de GitHub en los PRs etiquetados con 'automerge'.
+# GitHub completa el merge solo cuando TODOS los checks obligatorios pasan y no
+# hay conflictos; si algo falla, el PR se queda abierto. Quitar la etiqueta
+# cancela el auto-merge.
+#
+# Requisitos previos: ver .github/CI.md
+#   - Settings > General > "Allow auto-merge" activado.
+#   - Ruleset de 'main' activa, con checks obligatorios.
+#   - Secret AUTOMERGE_TOKEN: PAT fine-grained con permisos
+#     "Contents: Read and write" y "Pull requests: Read and write".
+#     Sin el, se usa GITHUB_TOKEN y el push del merge NO dispara el CD.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, labeled, unlabeled, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Un PR no necesita dos ejecuciones simultaneas de esto.
+concurrency:
+  group: automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  automerge:
+    name: Enable auto-merge
+    runs-on: ubuntu-latest
+    # OJO: pull_request_target corre con permisos de escritura sobre el repo.
+    # Este job NO hace checkout del codigo del PR a proposito: sin checkout no
+    # se ejecuta nada procedente de la rama, que es lo que haria peligroso este
+    # trigger en un repo publico.
+    steps:
+      - name: Enable auto-merge
+        if: contains(github.event.pull_request.labels.*.name, 'automerge') && github.event.pull_request.draft == false
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --squash "$PR_URL"
+
+      - name: Disable auto-merge
+        if: github.event.action == 'unlabeled' && github.event.label.name == 'automerge'
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --disable-auto "$PR_URL"
