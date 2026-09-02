@@ -1,8 +1,14 @@
 name: publish
 
+# Con filtro de rutas: un merge que solo toca documentacion o apps/api no debe
+# reconstruir ni redesplegar la web en produccion.
 on:
   push:
     branches: ['main']
+    paths:
+      - 'apps/web/**'
+      - '.github/workflows/web-cd.yml'
+  workflow_dispatch:   # permite redesplegar a mano desde la pestana Actions
 
 env:
   REGISTRY: ghcr.io
