@@ -309,3 +309,38 @@ Regla comunicable: **"Envío gratis desde 49,90 €"**.
 2. Tarifa real con contrato o con el comparador de Packlink (origen Albacete).
 3. Si los precios 29,90/49,90/79,90 € **incluyen IVA** y qué margen queda tras el envío (consultar al gestor).
 4. Si el prototipo gratis se devuelve o se queda el cliente al terminar los 30 días.
+
+---
+
+## 11. Propuesta de precios y prueba (PENDIENTE DE APROBACIÓN)
+
+> Modelo propio con supuestos, **no es asesoramiento fiscal**. Falta validar con un gestor: IVA, alta de actividad, facturación y condiciones legales de venta online.
+
+**Supuestos:** precios con IVA (21 %) · material 5,30–7 € por unidad (rango de `context.md`) · embalaje 1,20 € · comisión de cobro ~1,5 % + 0,25 € (tarjeta europea, aproximado) · envío real 6 € (1 ud), 10 € (2 uds), 12 € (4 uds) · opcionalmente tu tiempo de impresión y montaje a 5 €/ud (supuesto).
+
+**Margen por pedido (euros netos tras IVA, material, embalaje, envío y comisión):**
+
+| Pack | Precio actual | Margen (material 7 €) | Con tu tiempo (5 €/ud) | Precio propuesto | Margen propuesto | Con tu tiempo |
+|---|---|---|---|---|---|---|
+| Starter, 1 ud | 29,90 € + 4,90 € envío | 13,8 € (48 %) | 8,8 € (31 %) | **29,90 € + 4,90 € envío** | igual | igual |
+| Pro, 2 uds | 49,90 € envío gratis | 15,0 € (36 %) | 5,0 € (12 %) | **54,90 € envío gratis** | 19,1 € (42 %) | 9,1 € (20 %) |
+| Business, 4 uds | 79,90 € envío gratis | 23,4 € (35 %) | 3,4 € (5 %) | **94,90 € envío gratis** | 35,6 € (45 %) | 15,6 € (20 %) |
+
+Conclusión: con los precios actuales, **si cuentas tu tiempo, Pro y Business casi no dejan margen**. Con los propuestos, todos los packs dejan al menos ~20 %.
+
+**Precios propuestos (IVA incluido):**
+- Starter 1 ud: **29,90 €** + 4,90 € de envío.
+- Pro 2 uds: **54,90 €** (envío gratis).
+- Business 4 uds: **94,90 €** (envío gratis).
+- Regla comunicable: "Envío gratis desde 50 €".
+- Panel: **4,90 €/mes** o **49 €/año** (2 meses gratis al pagar el año). **3 primeros meses incluidos** en cualquier pack: el coste para ti es casi cero y el cliente llega a la renovación habiendo visto sus estadísticas.
+- Personalizado con logo: **+19,90 €** por el diseño del primer pedido; reposiciones sin ese recargo.
+
+**El prototipo gratis (recomendación: quitarlo de la web).**
+- Cuesta ~12,5–14 € por lead (material + embalaje + envío). Para salir a cuenta necesitas que **~25–30 %** de los que lo piden acaben comprando. Sin datos de conversión, es un riesgo que pagas tú.
+- Alternativa: **"Pruébalo 30 días con devolución"**. El cliente compra el Starter; si no le convence en 30 días, devuelve el objeto (a su cargo) y recibe el importe del producto (no el del envío). Si no lo devuelve, ya ha pagado el material. Tu riesgo baja a casi cero.
+- Los modelos genéricos devueltos **se pueden revender**: el chip lleva el token y el destino se cambia en el panel (verificar que la asignación de dispositivo a otro negocio se puede hacer desde el admin). Los personalizados con logo no.
+- Para los **3–10 primeros clientes de Albacete** (validación de `context.md`), regálalo en persona y pide permiso para testimonios. Es una inversión deliberada de ~7 € por unidad, sin envío.
+- **Cambio que implica:** el CTA oficial "Pide tu prototipo gratis" (regla en `.agents/context.md` y `.agents/seo.md`) pasaría a "Pruébalo 30 días" y `/prototipo-gratis` a `/prueba-30-dias`. No lo cambio en los archivos hasta que lo apruebes.
+
+**Ingresos recurrentes:** el negocio de verdad es el panel. A 4,90 €/mes (neto ~3,7 € tras IVA y comisión), 100 clientes activos aportan ~370 €/mes netos antes de costes de servidor. El objeto físico es la entrada; conviene que el cliente llegue vivo a los 3 meses incluidos.
