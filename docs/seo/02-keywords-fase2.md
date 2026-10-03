@@ -117,3 +117,29 @@ Asignación: la **home** recibe A, B1 y B2. B1 y B2 son búsquedas distintas (pr
 Variantes con diferencia semántica real (ahora tres ejes): tecnología (QR frente a NFC), formato de producto (tarjeta frente a genérico) y fabricar frente a comprar hecho.
 
 Pendiente: la tanda de semillas "problema" (`cómo conseguir reseñas en google`, `pedir reseñas google clientes`, `aumentar reseñas google`) no está en los exports. Es donde estará el volumen informativo y el mejor material para contenido de apoyo.
+
+## 9. Tercer export (`Keyword_Stats_…03_15_17`): semillas "problema"
+
+| Keyword | Media/mes | 3 meses | Interanual | Competencia | Puja pág. 1 |
+|---|---|---|---|---|---|
+| aumentar reseñas google | 20 | −50 % | 0 % | Media | 0,76–4,68 € |
+| cómo conseguir reseñas en google | sin datos | | | | |
+| pedir reseñas google clientes | sin datos | | | | |
+| conseguir reseñas google negocio | sin datos | | | | |
+
+Conclusión: la demanda informativa medible en Keyword Planner es prácticamente nula (20 búsquedas/mes). No justifica ahora una estrategia de contenidos de blog. Si más adelante se quiere probar, hay que hacerlo con otras fuentes (autocompletado de Google, "Otras preguntas de los usuarios", Google Trends y Search Console cuando la web esté indexada).
+
+## 10. Cierre de la fase 2: mapa final keyword → página (datos disponibles)
+
+| Página | Keyword principal | Secundarias con datos | Evidencia |
+|---|---|---|---|
+| `/` | tarjeta nfc reseñas google | reseñas google nfc; qr reseñas google; qr para reseñas de google; código qr reseñas google; código qr para reseñas google | 260 media (1.900 en ago) + 50 (170 en ago) + 440 |
+| `/gimnasios`, `/peluquerias-y-barberias`, `/restaurantes-y-cafeterias` | ninguna con volumen en Keyword Planner | usar el sector de forma natural en el texto | Sin datos: se justifican por conversión y venta directa |
+| `/precios`, `/prototipo-gratis`, `/panel-estadisticas-nfc`, `/objeto-personalizado` | ninguna con volumen | — | Sin datos |
+
+Descartadas: `generar codigo qr para reseñas google`, `crear qr reseñas google` (herramienta gratuita, no se ofrece).
+
+Siguientes pasos recomendados:
+1. Mirar Google Trends ("tarjeta nfc reseñas google", España, 12 meses) para saber si el pico de agosto se sostiene.
+2. Probar semillas más amplias que Google sí conoce: `reseñas google`, `tarjeta nfc`, `tarjeta nfc negocio`, `reseñas en google maps`, también sin tildes.
+3. Valorar una campaña de Google Ads pequeña sobre "tarjeta nfc reseñas google" (puja 0,04–0,13 €) como forma barata de validar demanda y conversión antes de invertir en contenido.
