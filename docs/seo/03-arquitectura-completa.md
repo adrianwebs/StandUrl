@@ -1,5 +1,7 @@
 # StandUrl — Arquitectura SEO completa: clusters, URLs, landings, guías y plan de contenido
 
+> **ACTUALIZACIÓN 3 oct 2026 (aprobada por el propietario):** el prototipo gratis se elimina. CTA = **"Pruébalo 30 días"**, URL = `/prueba-30-dias`, precios y envío de las secciones 10 y 11. Donde las secciones 1–9 hablan de "prototipo", léase "prueba de 30 días". Se añaden `/envios-y-devoluciones` y `/legal/aviso-legal`.
+
 > Versión 1 · 3 oct 2026 · Basada en `01` (mercado y personas), `02` (keywords) y `.agents/*`.
 > **Qué es y qué no es:** es el plano completo del sitio (qué páginas, qué ataca cada una, qué lleva dentro y cómo se enlazan). Contiene el *esqueleto de contenido* de cada página (títulos, H1, secciones, mensajes, schema, enlaces). La **redacción final** de cada página es la fase 3 y se hace página a página.
 > **Aviso de datos:** los volúmenes de Keyword Planner de agosto 2026 no son fiables (ver `02`, sección 11). Se usan medias anuales. La demanda de búsqueda de este nicho es **pequeña**; el diseño del sitio tiene en cuenta que la conversión y la venta directa pesan más que el tráfico.
@@ -60,7 +62,7 @@ Cifras = media mensual del Planificador (sep 2025–ago 2026). "Intención" = lo
 |---|---|---|---|---|
 | 1 | `/gimnasios` | Landing de sector | 10 | Existe |
 | 2 | `/` | Home / hub | 1, 2 | Existe |
-| 3 | `/prototipo-gratis` | Conversión | — | Existe |
+| 3 | `/prueba-30-dias` | Conversión | — | Existe |
 | 4 | `/peluquerias-y-barberias` | Landing de sector | 10 | Existe |
 | 5 | `/precios` | Transaccional | 5 | Existe |
 | 6 | `/objeto-personalizado` | Landing de servicio | 4 | **Nueva** |
@@ -96,11 +98,11 @@ Formato: URL · title (≤60) · meta (≤155) · H1 · keywords · estructura �
 
 ### 4.1 Home `/`
 - **Title:** `Soporte NFC y QR para reseñas de Google | StandUrl`
-- **Meta:** `Objeto de diseño con NFC y QR para que tus clientes dejen su reseña en Google con un toque. Cambia el destino cuando quieras. Pide tu prototipo gratis.`
+- **Meta:** `Objeto de diseño con NFC y QR para que tus clientes dejen su reseña en Google con un toque. Cambia el destino cuando quieras. Pruébalo 30 días.`
 - **H1:** `Soporte NFC y QR para que tus clientes te dejen reseñas en Google`
 - **Keywords:** reseñas google nfc · qr reseñas google · qr para reseñas de google · código qr reseñas google · soporte nfc reseñas.
 - **Estructura:**
-  1. Hero: promesa + imagen del objeto (la pesa) + CTA "Pide tu prototipo gratis" + microcopia "30 días de prueba, sin compromiso".
+  1. Hero: promesa + imagen del objeto (la pesa) + CTA "Pruébalo 30 días" + microcopia "30 días de prueba, sin compromiso".
   2. Problema → solución (pedir reseñas incomoda; un toque).
   3. Cómo funciona en 3 pasos: lo pones en el mostrador · el cliente acerca el móvil o escanea el QR · llega a tu ficha de Google.
   4. **"No es una tarjeta, es un objeto"**: tabla comparativa tarjeta de PVC / pegatina con QR / objeto StandUrl (diseño, visibilidad, edición del destino, panel, precio). Enlace a la guía de tarjetas.
@@ -125,7 +127,7 @@ Formato: URL · title (≤60) · meta (≤155) · H1 · keywords · estructura �
 
 ### 4.3 `/peluquerias-y-barberias`
 - **Title:** `Reseñas de Google para peluquerías y barberías | StandUrl`
-- **Meta:** `Un objeto con NFC y QR en tu mostrador para que cada cliente satisfecho deje su reseña en Google en el momento justo. Prototipo gratis.`
+- **Meta:** `Un objeto con NFC y QR en tu mostrador para que cada cliente satisfecho deje su reseña en Google en el momento justo. Prueba 30 días.`
 - **H1:** `Que cada cliente que sale encantado deje su reseña en Google`
 - **Estructura:** el momento justo (al verse el resultado) → el objeto en el mostrador/sillón → funciona con NFC y QR (clientes sin NFC) → cómo queda en tu local → FAQ (clientes mayores, cómo se instala, aguanta humedad y productos) → modelos (solo los realmente disponibles) → CTA.
 - **Schema/enlaces:** igual que 4.2 con guía `/guias/resenas-google-peluqueria-barberia`.
@@ -139,16 +141,16 @@ Formato: URL · title (≤60) · meta (≤155) · H1 · keywords · estructura �
 
 ### 4.5 `/precios`
 - **Title:** `Precios: soporte NFC y QR para reseñas de Google | StandUrl`
-- **Meta:** `Starter 29,90 €, Pro 49,90 €, Business 79,90 €. Pago único, sin permanencia. Panel opcional por 4,90 €/mes. Pide tu prototipo gratis.`
+- **Meta:** `Starter 29,90 €, Pro 49,90 €, Business 79,90 €. Pago único, sin permanencia. Panel opcional por 4,90 €/mes. Pruébalo 30 días.`
 - **H1:** `Precios claros: pagas el objeto una vez`
 - **Estructura:** tabla de 3 packs (1/2/4 dispositivos) · qué incluye cada uno · panel opcional 4,90 €/mes (qué se pierde si no se paga: nada del redirect) · envío (**dato pendiente**: coste y plazo) · comparación con tarjetas de ~1 € (honesta: qué pagas de más y por qué) · FAQ de compra · CTA prototipo.
 - **Keywords:** comprar soporte nfc reseñas google, precio, "comprar tarjeta nfc" como variante secundaria.
 - **Schema:** `Product` + `Offer` (3 ofertas con `price`, `priceCurrency: EUR`), `FAQPage`.
 
-### 4.6 `/prototipo-gratis`
-- **Title:** `Prototipo gratis 30 días del soporte NFC para reseñas | StandUrl`
-- **Meta:** `Prueba un objeto real con NFC y QR en tu negocio durante 30 días. Sin compromiso ni permanencia. Pide tu prototipo gratis.`
-- **H1:** `Pide tu prototipo gratis`
+### 4.6 `/prueba-30-dias`
+- **Title:** `Prueba 30 días 30 días del soporte NFC para reseñas | StandUrl`
+- **Meta:** `Prueba un objeto real con NFC y QR en tu negocio durante 30 días. Sin compromiso ni permanencia. Pruébalo 30 días.`
+- **H1:** `Pruébalo 30 días`
 - **Estructura:** qué recibes · cómo funciona la prueba (30 días) · qué te pedimos (tu enlace de reseñas y tu dirección de envío) · qué pasa al terminar · formulario corto · FAQ · enlaces de confianza (sobre nosotros, normas).
 - **Schema:** `Offer`/`Service`. **Nota:** el formulario ya existe (`actions.ts`); revisar RGPD.
 
@@ -157,7 +159,7 @@ Formato: URL · title (≤60) · meta (≤155) · H1 · keywords · estructura �
 - **Meta:** `Objeto impreso en 3D con tu logo y colores, con NFC y QR para reseñas de Google. Diseñado en Albacete. Consulta sin compromiso.`
 - **H1:** `Un objeto con tu marca, no una tarjeta genérica`
 - **Keywords:** tarjetas nfc personalizadas (principal); tarjeta personal nfc.
-- **Estructura:** qué se puede personalizar (logo, colores, forma, **dentro de lo que la impresora y los modelos permiten: pendiente de fijar límites**) · proceso (briefing → modelo → prueba → envío) · plazos (**pendiente**) · precio/forma de presupuesto (**pendiente**) · galería (cuando existan piezas reales) · FAQ · CTA "Pide tu prototipo gratis" o "Cuéntanos tu idea".
+- **Estructura:** qué se puede personalizar (logo, colores, forma, **dentro de lo que la impresora y los modelos permiten: pendiente de fijar límites**) · proceso (briefing → modelo → prueba → envío) · plazos (**pendiente**) · precio/forma de presupuesto (**pendiente**) · galería (cuando existan piezas reales) · FAQ · CTA "Pruébalo 30 días" o "Cuéntanos tu idea".
 - **Schema:** `Service`, `FAQPage`.
 
 ### 4.8 `/panel-estadisticas-nfc`
@@ -214,12 +216,12 @@ Reglas de las guías: autor y fecha visibles, `Article` + `BreadcrumbList`, mín
 | Desde | Hacia | Anchor sugerido |
 |---|---|---|
 | Home | 3 sectores, precios, prototipo, panel, personalizado, guía tarjeta, guía normas | Nombre claro (p. ej. "para gimnasios") |
-| Cada sector | Home (migas), precios, prototipo, su guía de sector | "Pide tu prototipo gratis" (siempre igual) |
+| Cada sector | Home (migas), precios, prototipo, su guía de sector | "Pruébalo 30 días" (siempre igual) |
 | Guía tarjeta | Home, precios, prototipo, `/objeto-personalizado` | "soporte NFC para reseñas", "objeto personalizado" |
 | Guía QR vs NFC | Home, guía tarjeta | idem |
 | Guías de problema | Home y landing de sector correspondiente | idem |
 | Panel | Precios, guía programable | idem |
-| Todas | `/prototipo-gratis` | "Pide tu prototipo gratis" |
+| Todas | `/prueba-30-dias` | "Pruébalo 30 días" |
 
 Regla: ningún enlace con anchor "haz clic aquí". La home no enlaza a `/t/`.
 
@@ -247,7 +249,7 @@ Regla: ningún enlace con anchor "haz clic aquí". La home no enlaza a `/t/`.
 |---|---|
 | 1 | Comprar dominio · configurar canonical/sitemap/robots · Search Console · reescribir metadatos de la home (4.1) |
 | 2 | Redacción final de home y `/precios` · schema |
-| 3 | `/gimnasios` y `/prototipo-gratis` · primeras 3 guías P1 |
+| 3 | `/gimnasios` y `/prueba-30-dias` · primeras 3 guías P1 |
 | 4 | `/peluquerias-y-barberias`, `/restaurantes-y-cafeterias`, `/sobre-standurl`, `/contacto` |
 | 5–6 | `/objeto-personalizado`, `/panel-estadisticas-nfc`, FAQ |
 | 7–10 | Guías P2 · primeros clientes del prototipo → pedir permiso para testimonios reales |
@@ -270,7 +272,7 @@ Regla: ningún enlace con anchor "haz clic aquí". La home no enlaza a `/t/`.
 **Riesgos:**
 - Demanda orgánica pequeña: sin venta directa el SEO tardará en dar clientes.
 - Búsqueda "tarjeta nfc": intención de comprar tarjetas baratas; si la guía no convence, rebotará.
-- Marca nueva sin reseñas ni enlaces: priorizar la primera ficha de Google y el prototipo gratis.
+- Marca nueva sin reseñas ni enlaces: priorizar la primera ficha de Google y el prueba de 30 días.
 - Cumplimiento de la política de reseñas de Google: revisar cada texto antes de publicar.
 
 ---

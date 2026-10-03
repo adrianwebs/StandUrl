@@ -18,14 +18,20 @@ El objeto parece un producto profesional de marca, no una tarjeta NFC genérica.
 ## Modelo de Negocio
 
 ### Producto físico (venta única)
-| Pack     | Precio  | Dispositivos |
-|----------|---------|--------------|
-| Starter  | 29,90 € | 1            |
-| Pro      | 49,90 € | 2            |
-| Business | 79,90 € | 4            |
+Precios con IVA incluido (aprobados el 3 oct 2026, ver `docs/seo/03-arquitectura-completa.md` §10–11).
+
+| Pack     | Precio  | Dispositivos | Envío |
+|----------|---------|--------------|-------|
+| Starter  | 29,90 € | 1            | 4,90 € |
+| Pro      | 54,90 € | 2            | Gratis |
+| Business | 94,90 € | 4            | Gratis |
+
+- Regla comunicable: **envío gratis desde 50 €**. Península y Baleares (+5 €); Canarias, Ceuta y Melilla fuera por ahora.
+- Objeto con logo: **+19,90 €** por el diseño del primer pedido (modelos de catálogo incluidos en el precio del pack).
+- **Prueba de 30 días con devolución** (sustituye al prototipo gratis): si no convence, el cliente devuelve el objeto (envío de vuelta a su cargo) y se le reembolsa el producto, no el envío de ida. Los objetos personalizados con logo no se devuelven salvo defecto.
 
 ### SaaS (recurrente opcional)
-- **4,90 €/mes** por negocio
+- **4,90 €/mes** por negocio, o **49 €/año** (2 meses gratis). **Los 3 primeros meses van incluidos** en cualquier pack.
 - Sin suscripción: el redirect sigue funcionando (URL congelada)
 - Con suscripción: cambio de destino, estadísticas, historial, múltiples dispositivos
 
@@ -36,7 +42,7 @@ El objeto parece un producto profesional de marca, no una tarjeta NFC genérica.
 
 ## Objetivo de Validación (6 meses)
 - Semana 1-2: 3 modelos 3D + 10 unidades físicas
-- Semana 3: 3 primeros clientes (prototipo gratis 30 días)
+- Semana 3: 3 primeros clientes (entrega en mano en Albacete, gratis y a propósito, a cambio de testimonio)
 - Semana 4: entrevista de feedback
 - Mes 2-3: SaaS mínimo + primeros pagos
 - Mes 6: 100 clientes activos → 500 €/mes MRR
@@ -64,6 +70,7 @@ El objeto parece un producto profesional de marca, no una tarjeta NFC genérica.
 - **Nunca** añadir features no incluidas en el MVP (app móvil, IA, CRM, campañas, heatmaps, API pública).
 - El stack está fijado: **Next.js + TypeScript** (frontend), **ASP.NET Core Minimal API** (backend), **PostgreSQL** (DB), **Redis** (caché redirects), **Docker + Traefik** (infra).
 - Pagos: **Stripe** (activar cuando llegue la capa de suscripción, no antes).
-- El CTA principal de la landing es siempre **"Pide tu prototipo gratis"**, no "Comprar".
+- El CTA principal de la landing es siempre **"Pruébalo 30 días"**, no "Comprar". El **prototipo gratis se ha eliminado** (coste ~12–14 € por lead sin garantía de conversión).
+- No se cobra online todavía: Stripe se activa en Fase 2. Hasta entonces, el formulario de pedido genera una solicitud y el cobro se gestiona a mano.
 - **Identidad Visual y Diseño**: Toda nueva UI debe seguir estrictamente la **Paleta 1 (Warm Cream & Minimalist Light)** detallada en `.agents/design.md`. Prohibido crear pantallas con fondos negros legacy `#0A0A0A` o acentos dorados `#F5A623`. Usar siempre el componente `<Logo />` para logos y favicons oficiales de `public/`.
 
