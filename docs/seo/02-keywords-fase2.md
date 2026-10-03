@@ -143,3 +143,14 @@ Siguientes pasos recomendados:
 1. Mirar Google Trends ("tarjeta nfc reseñas google", España, 12 meses) para saber si el pico de agosto se sostiene.
 2. Probar semillas más amplias que Google sí conoce: `reseñas google`, `tarjeta nfc`, `tarjeta nfc negocio`, `reseñas en google maps`, también sin tildes.
 3. Valorar una campaña de Google Ads pequeña sobre "tarjeta nfc reseñas google" (puja 0,04–0,13 €) como forma barata de validar demanda y conversión antes de invertir en contenido.
+
+## 11. Cuarto export (`Keyword_Stats_…03_20_23`) y corrección sobre el pico de agosto
+
+**Aviso de fiabilidad (importante).** La captura de Google Trends muestra una curva a 0 durante agosto y septiembre, con picos solo en los últimos días. Eso es incompatible con las 1.900 búsquedas de agosto que da el Planificador para `tarjeta nfc reseñas google`. Trends pone a 0 los términos con muy poco volumen, y cualquier búsqueda puntual (incluidas las del propio propietario al investigar) provoca un "pico". Además, en el export de agosto suben **a la vez** términos sin relación (`reseñas google` 18.100 → 22.200; `tarjeta nfc` 1.000 → 2.900), lo que sugiere que el último mes del Planificador puede estar inflado o ser provisional.
+Decisión: **no se toma el valor de agosto como demanda real.** Se usa la media anual como cifra de planificación y se marca todo lo demás como "por verificar con Search Console / un test de Google Ads".
+
+Resumen del export (≈70 keywords):
+- **Fuera de alcance por intención** (el usuario quiere *ver o gestionar sus propias reseñas*, no conseguir más): `reseñas google` 18.100, `mis reseñas google` 6.600, `google reseñas` 3.600, `reseñas de google` 1.000, `ver mis reseñas google` 720, `reseña google maps` 720, `google maps reseñas` 480, y unas 30 variantes más (anónimas, buscar, ver, restaurantes como consumidor, Gmail, Android…). Volumen enorme pero **cero intención de compra** y mercado equivocado.
+- **Fuera de alcance por producto**: tarjetas de visita/presentación/digitales NFC (~140/mes: StandUrl no vende tarjetas de visita), tarjeta SD (ruido), `tarjetas nfc amazon` (marca ajena), chips técnicos NTAG215 (bricolaje).
+- **Relevantes y con dato** (media anual/mes): `tarjeta nfc` 1.300 (genérica), `tarjetas nfc personalizadas` 260 (+129 % interanual), `nfc tarjeta` 140, `tarjetas nfc programables` 50, `comprar tarjeta nfc` 40 (+267 % interanual), `nfc en huawei` 40, `nfc en android` 30.
+- Google agrupa variantes (`tarjeta nfc`/`tarjetas con nfc` y `tarjeta nfc programable(s)` dan la misma cifra): **no se suman**.
