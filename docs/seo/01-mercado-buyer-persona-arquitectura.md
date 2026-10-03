@@ -318,10 +318,10 @@ Nadie puede garantizar una primera posición. Lo que sí es razonable para Stand
 - Con un objetivo de 100 clientes, **pocas búsquedas bien convertidas** bastan.
 - Mientras la marca no tenga autoridad, el SEO se complementa con reseñas propias reales, ficha de Google propia y enlaces desde directorios del sector.
 
-## 7. Datos que necesito confirmar contigo
+## 7. Datos confirmados por el propietario (3 oct 2026)
 
-1. ¿Dominio definitivo (`standurl.com` u otro)?
-2. ¿Existe base física/ciudad de la que quieras hablar en la web (taller de impresión, p. ej.)?
-3. ¿Modelos 3D reales disponibles hoy además de la pesa?
-4. ¿Se ofrece personalización con logo ya hoy, o solo en el futuro?
-5. ¿Hay clientes del prototipo gratis con permiso para citar sus resultados?
+1. Dominio definitivo: **standurl.com** (pendiente de comprar). Hasta entonces, no indexar el dominio provisional `standurl.webadir.es`.
+2. Propietario de Albacete, sin base física, todo por envío; fabricación propia con impresora 3D.
+3. Modelos reales hoy: solo la pesa. Quedan por modelar: ver la propuesta en el informe de fase 2.
+4. La personalización con logo **sí** se ofrece: la página `/objeto-personalizado` pasa de fase 2 a fase 1.
+5. Sin clientes del prototipo todavía: no hay testimonios que citar. No publicar reseñas ni cifras inventadas.
