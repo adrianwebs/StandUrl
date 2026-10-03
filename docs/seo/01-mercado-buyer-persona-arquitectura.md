@@ -1,5 +1,7 @@
 # StandUrl — Estudio de mercado, buyer personas y arquitectura web (fase 1)
 
+> **Nota (3 oct 2026):** el prototipo gratis se eliminó; donde este documento lo menciona, léase «prueba de 30 días con devolución». Precios vigentes en `.agents/context.md`.
+
 > Documento de trabajo SEO. Fecha: octubre 2026.
 > Base: `.agents/context.md`, `.agents/architecture.md`, el código de `apps/web` y búsquedas web públicas.
 > **Lo que NO hay aquí:** volúmenes de búsqueda ni dificultad de keywords. Esos datos vendrán de los CSV de Google Keyword Planner (fase 2). Las frases de búsqueda de los buyer personas son **hipótesis** a validar con esos CSV.

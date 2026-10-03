@@ -19,7 +19,8 @@ NFC / QR  →  https://standurl.com/t/{TOKEN}  →  302  →  destino configurab
 | `apps/api/StandUrl.Api.Tests` | Tests unitarios con xUnit |
 | `infra` | Docker Compose de desarrollo y producción |
 | `Modelos` | Modelos 3D de los dispositivos (`.blend`, `.stl`, `.3mf`) |
-| `.agents` | Contexto, arquitectura y guía de diseño del proyecto |
+| `.agents` | Contexto, arquitectura, diseño y reglas SEO del proyecto |
+| `docs` | Estudio SEO (`docs/seo`) y lista de pendientes (`docs/PENDIENTES.md`) |
 | `.github/workflows` | CI/CD de la web en GitHub Actions |
 
 ## Stack
