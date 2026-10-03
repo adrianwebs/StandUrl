@@ -1,87 +1,104 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import PageHero from '@/components/PageHero'
+import CtaFinal from '@/components/sections/CtaFinal'
+import { Card, Container, Section, SectionHeader } from '@/components/ui'
 
-export const metadata: Metadata = { title: 'Cómo funciona' }
+export const metadata: Metadata = {
+  title: 'Cómo funciona el soporte NFC y QR de StandUrl',
+  description:
+    'Qué pasa desde que tu cliente acerca el móvil o escanea el QR hasta que llega a tu ficha de Google, y por qué puedes cambiar el destino sin tocar el objeto.',
+  alternates: { canonical: '/como-funciona' },
+  openGraph: { url: '/como-funciona' },
+}
+
+const flow = [
+  { t: 'El objeto está en tu mostrador', d: 'Lleva un chip NFC y un código QR en la misma pieza.' },
+  { t: 'El cliente acerca el móvil o escanea el QR', d: 'Con NFC o con la cámara. No hace falta instalar nada.' },
+  { t: 'Se abre una dirección fija de StandUrl', d: 'Tanto el chip como el QR apuntan siempre a la misma dirección, con un código único para tu objeto.' },
+  { t: 'StandUrl lo redirige al destino configurado', d: 'Normalmente, el formulario de reseña de tu ficha de Google. Es la misma redirección para todos tus clientes.' },
+  { t: 'Se registra el uso', d: 'Si tienes el panel, ves cuántas veces se ha usado cada objeto.' },
+]
 
 export default function ComoFuncionaPage() {
   return (
-    <div className="min-h-screen pt-28 pb-16 px-4 sm:px-6 bg-[#FBFBF9] text-[#111827]">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-[#F3EFE6] border border-[#E5DFD3] text-[#B45309] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
-            Flujo Tecnológico
-          </div>
-          <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-[#111827] mb-4 tracking-tight">
-            Cómo funciona StandUrl
-          </h1>
-          <p className="text-[#78716C] text-lg sm:text-xl max-w-2xl mx-auto">
-            Tecnología sencilla, resultado inmediato sin complicaciones técnicas.
-          </p>
-        </div>
+    <>
+      <PageHero
+        crumbs={[{ label: 'Cómo funciona' }]}
+        badge="Cómo funciona"
+        title="Cómo funciona StandUrl"
+        lead="Tecnología sencilla para que tus clientes lleguen a tu ficha de Google sin complicaciones."
+      />
 
-        {/* Flujo visual */}
-        <div className="bg-white border border-[#E7E5E4] rounded-3xl p-8 sm:p-10 mb-10 shadow-sm">
-          <h2 className="font-heading text-xl font-extrabold text-[#111827] mb-6">El flujo completo</h2>
-          <div className="font-mono text-sm text-[#78716C] space-y-2.5 leading-loose">
-            <div className="font-semibold text-[#111827]"><span className="text-[#B45309] font-bold">1.</span> Objeto físico personalizado en tu mostrador</div>
-            <div className="pl-6 text-[#A8A29E]">↓</div>
-            <div className="font-semibold text-[#111827]"><span className="text-[#B45309] font-bold">2.</span> El cliente acerca el móvil (NFC) o escanea el QR</div>
-            <div className="pl-6 text-[#A8A29E]">↓</div>
-            <div className="font-semibold text-[#111827]"><span className="text-[#B45309] font-bold">3.</span> Petición ultrarrápida a <span className="text-[#18181B] bg-[#F3EFE6] px-2 py-0.5 rounded border border-[#E5DFD3]">standurl.com/t/8F7K2P</span></div>
-            <div className="pl-6 text-[#A8A29E]">↓ <span className="text-xs text-[#78716C] font-sans font-medium">(cache Redis · &lt;10ms de latencia)</span></div>
-            <div className="font-semibold text-[#111827]"><span className="text-[#B45309] font-bold">4.</span> El servidor responde <span className="text-green-700 font-bold bg-green-50 px-2 py-0.5 rounded border border-green-200">302 Redirect</span> → destino dinámico</div>
-            <div className="pl-6 text-[#A8A29E]">↓</div>
-            <div className="font-semibold text-[#111827]"><span className="text-[#B45309] font-bold">5.</span> Google Reviews de tu negocio se abre al instante con 5 estrellas</div>
-            <div className="pl-6 text-[#A8A29E]">↓ <span className="text-xs text-[#78716C] font-sans font-medium">(en background asíncrono, sin bloquear la carga)</span></div>
-            <div className="font-semibold text-[#111827]"><span className="text-[#B45309] font-bold">6.</span> Interacción registrada en tu dashboard de cliente</div>
-          </div>
-        </div>
+      <Section className="!pt-0">
+        <Container size="md">
+          <SectionHeader center={false} title="El recorrido completo" />
+          <ol className="space-y-4">
+            {flow.map((f, i) => (
+              <li key={f.t} className="flex gap-4 bg-white border border-[#E7E5E4] rounded-2xl p-5 shadow-xs">
+                <span className="font-heading text-3xl font-black text-[#E5DFD3] leading-none w-8 shrink-0">{i + 1}</span>
+                <div>
+                  <h3 className="font-bold text-[#111827] mb-1">{f.t}</h3>
+                  <p className="text-sm text-[#78716C] leading-relaxed">{f.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </Container>
+      </Section>
 
-        {/* Por qué no hay que tocar el objeto */}
-        <div className="grid md:grid-cols-2 gap-6 mb-10">
-          <div className="bg-white border border-[#E7E5E4] rounded-3xl p-6 sm:p-8 shadow-xs">
-            <h3 className="font-heading text-lg font-bold text-[#111827] mb-3">
-              ¿Por qué no hay que tocar el objeto nunca?
-            </h3>
-            <p className="text-[#78716C] text-sm leading-relaxed">
-              El chip NFC siempre apunta a <code className="text-[#B45309] font-bold bg-[#F3EFE6] px-1.5 py-0.5 rounded">standurl.com/t/TOKEN</code>.
-              Ese TOKEN no cambia nunca. Lo que cambia es el{' '}
-              <strong className="text-[#111827]">destino</strong> en nuestra base de datos en tiempo real.
-              Hoy Google Reviews, mañana tu menú, pasado mañana tu WhatsApp — sin cambiar el objeto físico.
-            </p>
-          </div>
-          <div className="bg-white border border-[#E7E5E4] rounded-3xl p-6 sm:p-8 shadow-xs">
-            <h3 className="font-heading text-lg font-bold text-[#111827] mb-3">
-              ¿Por qué el redirect es instantáneo?
-            </h3>
-            <p className="text-[#78716C] text-sm leading-relaxed">
-              El destino está en cache ultrarrápida. Cuando el cliente toca el objeto con su teléfono, el servidor responde en menos de 10ms. El usuario nunca ve una pantalla de carga ni intermediarios molestos.
-            </p>
-          </div>
-        </div>
-
-        {/* NFC vs QR */}
-        <div className="bg-[#F3EFE6] border border-[#E5DFD3] rounded-3xl p-8 sm:p-10 shadow-xs">
-          <h2 className="font-heading text-xl font-extrabold text-[#111827] mb-6">NFC + QR: las dos puertas</h2>
+      <Section tone="cream">
+        <Container size="md">
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white border border-[#E5DFD3] rounded-2xl p-6 shadow-xs">
-              <h3 className="font-bold text-[#111827] mb-2 flex items-center gap-2">
-                <span>📡 Chip NFC Integrado</span>
-              </h3>
+            <Card>
+              <h2 className="font-heading text-lg font-bold text-[#111827] mb-3">¿Por qué no hay que tocar el objeto nunca?</h2>
               <p className="text-[#78716C] text-sm leading-relaxed">
-                Compatible con iPhone y Android modernos. El cliente solo tiene que acercar el móvil sin abrir ninguna aplicación previa.
+                El chip siempre apunta a una dirección de StandUrl con un código único. Ese código no cambia nunca. Lo que cambia es el
+                destino, que guardamos en nuestro sistema y tú gestionas desde el panel. Si cambias de ficha o de local, no hay que reprogramar
+                el chip ni cambiar el objeto.
               </p>
-            </div>
-            <div className="bg-white border border-[#E5DFD3] rounded-2xl p-6 shadow-xs">
-              <h3 className="font-bold text-[#111827] mb-2 flex items-center gap-2">
-                <span>📷 Código QR Vectorial</span>
-              </h3>
+            </Card>
+            <Card>
+              <h2 className="font-heading text-lg font-bold text-[#111827] mb-3">¿Qué pasa si no pago el panel?</h2>
               <p className="text-[#78716C] text-sm leading-relaxed">
-                Cualquier smartphone con cámara. Integrado y extruido directamente en el objeto, cubriendo el 100% de compatibilidad.
+                El objeto sigue funcionando y redirigiendo al último destino que tuvieras configurado. El panel es opcional: sirve para
+                cambiar el destino y ver estadísticas.
               </p>
-            </div>
+            </Card>
           </div>
-        </div>
-      </div>
-    </div>
+        </Container>
+      </Section>
+
+      <Section>
+        <Container size="md">
+          <SectionHeader center={false} title="NFC y QR: las dos puertas" />
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card>
+              <h3 className="font-bold text-[#111827] mb-2">Chip NFC</h3>
+              <p className="text-[#78716C] text-sm leading-relaxed">
+                El cliente acerca el móvil al objeto. Funciona con los iPhone XS y posteriores y con la mayoría de móviles Android
+                actuales.{' '}
+                <Link href="/guias/mi-movil-tiene-nfc" className="text-[#B45309] font-semibold hover:underline">
+                  Cómo saber si tu móvil tiene NFC
+                </Link>
+                .
+              </p>
+            </Card>
+            <Card>
+              <h3 className="font-bold text-[#111827] mb-2">Código QR</h3>
+              <p className="text-[#78716C] text-sm leading-relaxed">
+                Cualquier móvil con cámara puede leerlo. Va en el mismo objeto, así que quien no tiene NFC no se queda fuera.{' '}
+                <Link href="/guias/qr-vs-nfc-resenas-google" className="text-[#B45309] font-semibold hover:underline">
+                  QR o NFC: cuál es mejor
+                </Link>
+                .
+              </p>
+            </Card>
+          </div>
+        </Container>
+      </Section>
+
+      <CtaFinal />
+    </>
   )
 }

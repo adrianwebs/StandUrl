@@ -1,85 +1,182 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { ArrowRight, Infinity as InfinityIcon, MapPin, ShieldCheck } from 'lucide-react'
 import HeroSection from '@/components/sections/HeroSection'
 import HowItWorks from '@/components/sections/HowItWorks'
 import ComparisonTable from '@/components/sections/ComparisonTable'
 import PricingSection from '@/components/sections/PricingSection'
-import FaqSection from '@/components/sections/FaqSection'
 import CtaFinal from '@/components/sections/CtaFinal'
+import FaqList from '@/components/FaqList'
+import JsonLd from '@/components/JsonLd'
+import { Card, Container, Eyebrow, H2, Section, SectionHeader } from '@/components/ui'
+import { faqHome } from '@/lib/faqs'
+import { SECTORS } from '@/lib/sectors'
+import { productLd } from '@/lib/schema'
 
 export const metadata: Metadata = {
-  title: 'Objetos NFC personalizados para conseguir reseñas de Google',
+  title: { absolute: 'Soporte NFC y QR para reseñas de Google | StandUrl' },
   description:
-    'Imprime en 3D un objeto personalizado para tu negocio (pesa, tijeras, taza) con NFC + QR. Tus clientes dejan reseñas en Google con un solo toque.',
-  keywords: [
-    'tarjeta nfc reseñas google personalizada',
-    'objeto 3d reseñas google',
-    'dispositivo nfc reseñas negocio',
-    'aumentar reseñas google negocio local',
-    'cómo pedir reseñas de google a mis clientes',
-  ],
+    'Objeto de diseño con NFC y QR para que tus clientes dejen su reseña en Google con un toque. Cambia el destino cuando quieras. Pruébalo 30 días.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'Soporte NFC y QR para reseñas de Google | StandUrl',
+    description:
+      'Objeto de diseño con NFC y QR para que tus clientes dejen su reseña en Google con un toque. Pruébalo 30 días.',
+    url: '/',
+  },
 }
 
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={productLd} />
       <HeroSection />
-      {/* Problema → Solución */}
-      <section className="py-20 px-4 sm:px-6 bg-[#F3EFE6]/50 border-y border-[#E7E5E4]">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10">
-          <div className="flex-1">
-            <p className="text-xs text-[#B45309] font-bold uppercase tracking-wider mb-3">El problema</p>
-            <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-[#111827] mb-4 leading-snug tracking-tight">
-              Pedir una reseña de Google incomoda. A ti y a tu cliente.
-            </h2>
-            <p className="text-[#78716C] leading-relaxed">
-              Decirle a alguien «¿me puedes dejar una reseña?» es incómodo. Pasarle un enlace por WhatsApp tiene una tasa de conversión bajísima. Y sin reseñas, en Google Maps pierdes clientes frente a la competencia que sí las tiene.
-            </p>
+
+      {/* Problema → solución */}
+      <Section tone="cream">
+        <Container size="md">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-start">
+            <div>
+              <Eyebrow>El problema</Eyebrow>
+              <H2 className="!text-2xl sm:!text-3xl mb-4">Pedir una reseña incomoda. A ti y a tu cliente.</H2>
+              <p className="text-[#78716C] leading-relaxed">
+                Decirle a alguien «¿me dejas una reseña?» resulta forzado, y mandar un enlace por WhatsApp se pierde entre
+                mil mensajes. El resultado: los clientes contentos se van sin opinar, y en Google Maps pierdes terreno frente a
+                quien sí acumula reseñas.
+              </p>
+            </div>
+            <div>
+              <Eyebrow tone="green">La solución</Eyebrow>
+              <H2 className="!text-2xl sm:!text-3xl mb-4">Un objeto que lo hace por ti.</H2>
+              <p className="text-[#78716C] leading-relaxed">
+                Lo dejas en el mostrador. El cliente acerca el móvil o escanea el QR y se abre el formulario de reseña de tu
+                ficha de Google. Tú no tienes que pedir nada, y él no tiene que buscarte ni instalar nada.
+              </p>
+            </div>
           </div>
-          <div className="text-5xl flex-shrink-0 text-[#A8A29E]">→</div>
-          <div className="flex-1">
-            <p className="text-xs text-[#16A34A] font-bold uppercase tracking-wider mb-3">La solución</p>
-            <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-[#111827] mb-4 leading-snug tracking-tight">
-              Con un toque, ya está.
-            </h2>
-            <p className="text-[#78716C] leading-relaxed">
-              El objeto está en el mostrador. El cliente acerca el móvil — o escanea el QR. En menos de 2 segundos está en tu ficha de Google, listo para dejar su reseña. Sin fricción, sin intermediarios, sin pedir nada.
-            </p>
-          </div>
-        </div>
-      </section>
+        </Container>
+      </Section>
+
       <HowItWorks />
-      {/* Galería de sectores */}
-      <section className="py-20 px-4 sm:px-6 bg-white border-y border-[#E7E5E4]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-[#111827] mb-4 tracking-tight">
-              Un objeto para cada negocio
-            </h2>
-            <p className="text-[#78716C] text-lg">Diseñado para que encaje en tu sector, no genérico.</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { emoji: '🏋️', name: 'Gimnasios', desc: 'Pesa · Mancuerna · Kettlebell', href: '/gimnasios' },
-              { emoji: '✂️', name: 'Peluquerías', desc: 'Tijeras · Peine · Secador', href: '/peluquerias-y-barberias' },
-              { emoji: '🍽️', name: 'Restaurantes', desc: 'Plato · Cubiertos · Copa', href: '/restaurantes-y-cafeterias' },
-              { emoji: '☕', name: 'Cafeterías', desc: 'Taza · Grano de café', href: '/restaurantes-y-cafeterias' },
-            ].map((s) => (
-              <a
-                key={s.name}
-                href={s.href}
-                className="bg-[#FBFBF9] border border-[#E7E5E4] rounded-2xl p-6 flex flex-col items-center text-center hover:border-[#18181B] hover:bg-[#F3EFE6]/60 shadow-xs hover:shadow-md transition-all group"
+      <ComparisonTable />
+
+      {/* Sectores */}
+      <Section>
+        <Container>
+          <SectionHeader
+            eyebrow="Para tu negocio"
+            title="Un objeto pensado para cada sector"
+            lead="Cada negocio tiene su momento y su lugar para pedir una reseña. Mira cómo lo planteamos en el tuyo."
+          />
+          <div className="grid md:grid-cols-3 gap-6">
+            {SECTORS.map((s) => (
+              <Link
+                key={s.slug}
+                href={s.path}
+                className="group bg-white border border-[#E7E5E4] rounded-2xl p-7 shadow-sm hover:shadow-md hover:border-[#18181B] transition-all flex flex-col"
               >
-                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">{s.emoji}</div>
-                <div className="font-bold text-[#111827] text-sm mb-1">{s.name}</div>
-                <div className="text-xs text-[#78716C] font-medium">{s.desc}</div>
-              </a>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#B45309] mb-2">{s.short}</p>
+                <h3 className="font-heading text-xl font-bold text-[#111827] mb-3 leading-snug">{s.h1}</h3>
+                <p className="text-sm text-[#78716C] leading-relaxed mb-5 flex-1">{s.description}</p>
+                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-[#111827]">
+                  Ver para {s.short.toLowerCase()}
+                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
             ))}
           </div>
-        </div>
-      </section>
-      <ComparisonTable />
-      <PricingSection />
-      <FaqSection />
+        </Container>
+      </Section>
+
+      {/* Destino editable */}
+      <Section tone="white">
+        <Container size="md">
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <Eyebrow>Panel y estadísticas</Eyebrow>
+              <H2 className="!text-2xl sm:!text-3xl mb-4">Cambia el destino sin tocar el objeto</H2>
+              <p className="text-[#57534E] leading-relaxed mb-4">
+                El chip no apunta directamente a tu ficha de Google, sino a una dirección fija de StandUrl. Desde el panel eliges
+                a dónde lleva en cada momento. Si cambias de ficha o de local, no hay que reprogramar nada.
+              </p>
+              <p className="text-[#57534E] leading-relaxed mb-6">
+                Con el panel también ves cuántas veces se usa cada objeto. Está incluido los primeros 3 meses.
+              </p>
+              <Link href="/panel-estadisticas-nfc" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#B45309] hover:underline">
+                Ver qué incluye el panel <ArrowRight size={16} />
+              </Link>
+            </div>
+            <Card className="bg-[#FBFBF9] font-mono text-sm space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-[#78716C]">Chip del objeto</span>
+                <span className="bg-white border border-[#E5DFD3] rounded-lg px-2.5 py-1 text-[#18181B]">standurl.com/t/…</span>
+              </div>
+              <div className="text-[#A8A29E] pl-2">↓ redirección</div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-[#78716C]">Destino (editable)</span>
+                <span className="bg-white border border-[#E5DFD3] rounded-lg px-2.5 py-1 text-[#B45309]">tu ficha de Google</span>
+              </div>
+            </Card>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Confianza */}
+      <Section>
+        <Container>
+          <SectionHeader eyebrow="Por qué confiar" title="Sin trucos y sin ataduras" />
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card>
+              <InfinityIcon className="text-[#B45309] mb-4" size={26} />
+              <h3 className="font-heading font-bold text-lg text-[#111827] mb-2">Sin permanencia</h3>
+              <p className="text-sm text-[#78716C] leading-relaxed">
+                Compras el objeto una vez. Si dejas de pagar el panel, el objeto sigue funcionando con el último destino que
+                hayas configurado.
+              </p>
+            </Card>
+            <Card>
+              <ShieldCheck className="text-[#B45309] mb-4" size={26} />
+              <h3 className="font-heading font-bold text-lg text-[#111827] mb-2">Sin filtros ni incentivos</h3>
+              <p className="text-sm text-[#78716C] leading-relaxed">
+                Todos tus clientes van al mismo sitio, sin preguntas previas. Google prohíbe filtrar a quién se piden reseñas y
+                ofrecer algo a cambio.{' '}
+                <Link href="/guias/normas-de-google-sobre-resenas" className="text-[#B45309] font-semibold hover:underline">
+                  Léelo aquí
+                </Link>
+                .
+              </p>
+            </Card>
+            <Card>
+              <MapPin className="text-[#B45309] mb-4" size={26} />
+              <h3 className="font-heading font-bold text-lg text-[#111827] mb-2">Hecho en Albacete</h3>
+              <p className="text-sm text-[#78716C] leading-relaxed">
+                Diseñamos e imprimimos cada objeto en nuestro taller, en tandas pequeñas. Hablas con la persona que lo hace.{' '}
+                <Link href="/sobre-standurl" className="text-[#B45309] font-semibold hover:underline">
+                  Conócenos
+                </Link>
+                .
+              </p>
+            </Card>
+          </div>
+        </Container>
+      </Section>
+
+      <div className="bg-[#F3EFE6]/40 border-y border-[#E7E5E4]">
+        <PricingSection />
+      </div>
+
+      <Section>
+        <Container size="sm">
+          <SectionHeader eyebrow="Dudas habituales" title="Preguntas frecuentes" center />
+          <FaqList faqs={faqHome} />
+          <p className="text-center text-sm text-[#78716C] mt-6">
+            <Link href="/preguntas-frecuentes" className="text-[#B45309] font-semibold hover:underline">
+              Ver todas las preguntas frecuentes
+            </Link>
+          </p>
+        </Container>
+      </Section>
+
       <CtaFinal />
     </>
   )

@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-export const metadata: Metadata = { title: 'Términos de Uso' }
+export const metadata: Metadata = { title: 'Términos de Uso', alternates: { canonical: '/legal/terminos' } }
 export default function TerminosPage() {
   return (
     <div className="min-h-screen pt-28 pb-16 px-4 sm:px-6 bg-[#FBFBF9] text-[#111827]">
       <div className="max-w-3xl mx-auto">
         <h1 className="font-heading text-3xl sm:text-4xl font-extrabold text-[#111827] mb-3 tracking-tight">Términos de Uso</h1>
-        <p className="text-[#78716C] mb-8 font-medium text-sm">Última actualización: agosto 2025</p>
+        <p className="text-[#78716C] mb-8 font-medium text-sm">Última actualización: octubre 2026</p>
         <div className="space-y-6 text-[#78716C] leading-relaxed">
           <section>
             <h2 className="font-heading text-xl font-bold text-[#111827] mb-3">1. Objeto</h2>
@@ -18,6 +18,10 @@ export default function TerminosPage() {
           <section>
             <h2 className="font-heading text-xl font-bold text-[#111827] mb-3">3. Política de reseñas de Google</h2>
             <p>El usuario se compromete a no utilizar el servicio para filtrar reseñas por puntuación (review gating), ni para ofrecer incentivos a cambio de reseñas, en cumplimiento con las políticas de Google My Business. StandUrl no implementa ningún filtro por estrellas: todos los usuarios son redirigidos directamente a Google.</p>
+          </section>
+          <section>
+            <h2 className="font-heading text-xl font-bold text-[#111827] mb-3">3 bis. Compra, envío y prueba de 30 días</h2>
+            <p>Las condiciones de compra, plazos y costes de envío y la prueba de 30 días con devolución están descritas en la página <a href="/envios-y-devoluciones" className="text-[#B45309] font-semibold hover:underline">Envíos y devoluciones</a>, que forma parte de estos términos. Los objetos personalizados con logo no admiten devolución salvo defecto de fabricación.</p>
           </section>
           <section>
             <h2 className="font-heading text-xl font-bold text-[#111827] mb-3">4. Servicio sin garantía de disponibilidad</h2>

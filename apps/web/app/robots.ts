@@ -1,9 +1,13 @@
 import type { MetadataRoute } from 'next'
+import { absoluteUrl } from '@/lib/site'
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://standurl.webadir.es'
   return {
-    rules: { userAgent: '*', allow: '/', disallow: ['/api/', '/admin/', '/t/'] },
-    sitemap: `${siteUrl}/sitemap.xml`,
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/api/', '/admin/', '/t/', '/dashboard', '/login'],
+    },
+    sitemap: absoluteUrl('/sitemap.xml'),
   }
 }

@@ -5,15 +5,17 @@ import Link from 'next/link'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { clsx } from 'clsx'
 import Logo from '@/components/Logo'
+import { CTA } from '@/lib/site'
 
 const navLinks = [
   { href: '/como-funciona', label: 'Cómo funciona' },
+  { href: '/objeto-personalizado', label: 'Con tu logo' },
 ]
 
 const sectorLinks = [
-  { href: '/gimnasios', label: '🏋️ Gimnasios' },
-  { href: '/peluquerias-y-barberias', label: '✂️ Peluquerías' },
-  { href: '/restaurantes-y-cafeterias', label: '🍽️ Restaurantes' },
+  { href: '/gimnasios', label: 'Gimnasios' },
+  { href: '/peluquerias-y-barberias', label: 'Peluquerías y barberías' },
+  { href: '/restaurantes-y-cafeterias', label: 'Restaurantes y cafeterías' },
 ]
 
 export default function Navbar() {
@@ -55,8 +57,17 @@ export default function Navbar() {
             className="relative"
             onMouseEnter={() => setSectorsOpen(true)}
             onMouseLeave={() => setSectorsOpen(false)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setSectorsOpen(false)
+            }}
           >
-            <button className="flex items-center gap-1 hover:text-[#111827] font-medium transition-colors">
+            <button
+              type="button"
+              aria-haspopup="true"
+              aria-expanded={sectorsOpen}
+              onFocus={() => setSectorsOpen(true)}
+              className="flex items-center gap-1 hover:text-[#111827] font-medium transition-colors"
+            >
               Sectores <ChevronDown size={14} />
             </button>
             {sectorsOpen && (
@@ -78,6 +89,10 @@ export default function Navbar() {
             Precios
           </Link>
 
+          <Link href="/guias" className="hover:text-[#111827] font-medium transition-colors">
+            Guías
+          </Link>
+
           <Link
             href="/login"
             className="text-xs text-[#78716C] hover:text-[#111827] border border-[#E7E5E4] hover:border-[#18181B] bg-white hover:bg-[#F3EFE6] px-3.5 py-1.5 rounded-lg transition-colors font-medium"
@@ -89,10 +104,10 @@ export default function Navbar() {
         {/* CTA */}
         <div className="hidden md:flex items-center gap-3">
           <Link
-            href="/prototipo-gratis"
+            href={CTA.href}
             className="inline-flex items-center gap-2 bg-[#18181B] text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-[#27272A] transition-all shadow-sm"
           >
-            Pide tu prototipo gratis
+            {CTA.label}
           </Link>
         </div>
 
@@ -138,6 +153,13 @@ export default function Navbar() {
             Precios
           </Link>
           <Link
+            href="/guias"
+            onClick={() => setOpen(false)}
+            className="text-[#78716C] hover:text-[#111827] font-medium text-sm"
+          >
+            Guías
+          </Link>
+          <Link
             href="/login"
             onClick={() => setOpen(false)}
             className="text-[#78716C] hover:text-[#111827] text-sm py-1 font-medium"
@@ -145,11 +167,11 @@ export default function Navbar() {
             Área clientes
           </Link>
           <Link
-            href="/prototipo-gratis"
+            href={CTA.href}
             onClick={() => setOpen(false)}
             className="bg-[#18181B] text-white text-sm font-semibold px-4 py-2.5 rounded-xl text-center hover:bg-[#27272A] transition-colors"
           >
-            Pide tu prototipo gratis
+            {CTA.label}
           </Link>
         </div>
       )}

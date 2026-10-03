@@ -1,146 +1,85 @@
-'use client'
-
-import { useActionState } from 'react'
-import { submitProtoRequest, type FormState } from './actions'
 import type { Metadata } from 'next'
-import { ArrowRight, CheckCircle, AlertCircle } from 'lucide-react'
+import Breadcrumbs from '@/components/Breadcrumbs'
+import FaqList from '@/components/FaqList'
+import { Badge, Container, Section } from '@/components/ui'
+import ProtoForm from './ProtoForm'
+import { faqCompra } from '@/lib/faqs'
+import { FREE_SHIPPING_FROM, TRIAL_DAYS, formatEUR } from '@/lib/pricing'
 
-const initialState: FormState = { status: 'idle' }
-
-function ProtoForm() {
-  const [state, action, pending] = useActionState(submitProtoRequest, initialState)
-
-  if (state.status === 'success') {
-    return (
-      <div className="flex flex-col items-center gap-4 py-10 text-center">
-        <CheckCircle size={48} className="text-green-600" />
-        <h3 className="font-heading text-2xl font-bold text-[#111827]">¡Solicitud recibida!</h3>
-        <p className="text-[#78716C] max-w-sm">{state.message}</p>
-        <p className="text-sm text-[#A8A29E] font-medium">Solemos responder el mismo día.</p>
-      </div>
-    )
-  }
-
-  return (
-    <form action={action} className="space-y-5">
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#78716C] mb-2">
-          Nombre del negocio <span className="text-[#DC2626]">*</span>
-        </label>
-        <input
-          name="businessName"
-          type="text"
-          required
-          placeholder="Ej: Gimnasio Élite, Peluquería Ana..."
-          className="w-full bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-4 py-3 text-[#111827] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#18181B] transition-colors text-sm"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#78716C] mb-2">Sector</label>
-        <select
-          name="sector"
-          className="w-full bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-4 py-3 text-[#111827] focus:outline-none focus:border-[#18181B] transition-colors text-sm"
-        >
-          <option value="gimnasio">🏋️ Gimnasio o fitness</option>
-          <option value="peluqueria">✂️ Peluquería o barbería</option>
-          <option value="restaurante">🍽️ Restaurante o cafetería</option>
-          <option value="otro">Otro tipo de negocio</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#78716C] mb-2">
-          Ciudad <span className="text-[#DC2626]">*</span>
-        </label>
-        <input
-          name="city"
-          type="text"
-          required
-          placeholder="Ej: Madrid, Barcelona, Valencia..."
-          className="w-full bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-4 py-3 text-[#111827] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#18181B] transition-colors text-sm"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#78716C] mb-2">
-          WhatsApp o teléfono <span className="text-[#DC2626]">*</span>
-        </label>
-        <input
-          name="contact"
-          type="text"
-          required
-          placeholder="+34 600 000 000"
-          className="w-full bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-4 py-3 text-[#111827] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#18181B] transition-colors text-sm"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[#78716C] mb-2">
-          Enlace a tu ficha de Google Maps{' '}
-          <span className="text-[#A8A29E] font-normal lowercase">(opcional)</span>
-        </label>
-        <input
-          name="googleMapsUrl"
-          type="url"
-          placeholder="https://maps.google.com/..."
-          className="w-full bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-4 py-3 text-[#111827] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#18181B] transition-colors text-sm"
-        />
-      </div>
-
-      {state.status === 'error' && (
-        <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
-          <AlertCircle size={16} />
-          {state.message}
-        </div>
-      )}
-
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full flex items-center justify-center gap-2 bg-[#18181B] hover:bg-[#27272A] text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-base shadow-md cursor-pointer"
-      >
-        {pending ? 'Enviando...' : 'Solicitar prototipo gratis'}
-        {!pending && <ArrowRight size={18} />}
-      </button>
-
-      <p className="text-xs text-[#78716C] text-center font-medium">
-        Sin tarjeta de crédito · Sin compromiso · Respondemos en menos de 24h
-      </p>
-    </form>
-  )
+export const metadata: Metadata = {
+  title: 'Pruébalo 30 días: NFC y QR para reseñas de Google',
+  description:
+    'Pide tu objeto con NFC y QR y pruébalo 30 días en tu negocio. Si no te convence, lo devuelves y te reembolsamos el producto. Sin permanencia.',
+  alternates: { canonical: '/prueba-30-dias' },
+  openGraph: { url: '/prueba-30-dias' },
 }
 
-export default function ProtoRequestPage() {
+const steps = [
+  { n: '1', t: 'Envías la solicitud', d: 'Eliges pack y nos dejas los datos de tu negocio. No se te cobra nada en este paso.' },
+  { n: '2', t: 'Confirmamos el pedido', d: 'Te contactamos para confirmar los detalles, el enlace de tu ficha de Google y el pago.' },
+  { n: '3', t: 'Lo recibes y lo pruebas', d: `Lo colocas en tu negocio y lo pruebas durante ${TRIAL_DAYS} días.` },
+  { n: '4', t: 'Te lo quedas o lo devuelves', d: 'Si no te convence, nos lo devuelves y te reembolsamos el producto.' },
+]
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ pack?: string; sector?: string; espera?: string; logo?: string }>
+}) {
+  const sp = await searchParams
+  const defaultPack = ['starter', 'pro', 'business'].includes(sp.pack ?? '') ? (sp.pack as string) : 'starter'
+  const defaultSector = ['gimnasio', 'peluqueria', 'restaurante', 'otro'].includes(sp.sector ?? '') ? (sp.sector as string) : 'gimnasio'
+  const waitlist = sp.espera === '1'
+  const defaultMessage = sp.logo === '1' ? 'Quiero mi logo en el objeto. Os paso el logo cuando me contactéis.' : ''
+
   return (
-    <div className="min-h-screen pt-28 pb-16 px-4 sm:px-6 bg-[#FBFBF9] text-[#111827]">
+    <div className="px-4 sm:px-6 pt-28 sm:pt-32 pb-16">
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-[#F3EFE6] border border-[#E5DFD3] text-[#B45309] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
-            Demostración Gratuita
+        <Breadcrumbs items={[{ label: 'Pruébalo 30 días' }]} />
+        <div className="mb-10">
+          <div className="mb-4">
+            <Badge>{waitlist ? 'Lista de espera' : `${TRIAL_DAYS} días de prueba con devolución`}</Badge>
           </div>
-          <h1 className="font-heading text-3xl sm:text-4xl font-extrabold text-[#111827] mb-4 tracking-tight">
-            Pide tu prototipo gratis
+          <h1 className="font-heading text-3xl sm:text-5xl font-extrabold text-[#111827] mb-4 tracking-tight leading-tight">
+            {waitlist ? 'Avísame cuando el modelo esté listo' : 'Pruébalo 30 días en tu negocio'}
           </h1>
           <p className="text-[#78716C] text-lg leading-relaxed">
-            Te hacemos un objeto personalizado para tu negocio y lo probamos juntos 30 días.{' '}
-            <strong className="text-[#111827]">Sin coste, sin compromiso.</strong>
+            {waitlist ? (
+              'Estamos terminando el modelo de tu sector. Déjanos tus datos y te avisamos en cuanto podamos enviártelo.'
+            ) : (
+              <>
+                Pide tu objeto con NFC y QR. Si en {TRIAL_DAYS} días no te convence, lo devuelves y te reembolsamos el producto.{' '}
+                <strong className="text-[#111827]">Envío gratis desde {formatEUR(FREE_SHIPPING_FROM)}.</strong>
+              </>
+            )}
           </p>
         </div>
 
-        <div className="bg-white border border-[#E7E5E4] rounded-3xl p-8 sm:p-10 shadow-sm">
-          <ProtoForm />
-        </div>
-
-        {/* Trust signals */}
-        <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-          {['30 días gratis', 'Sin tarjeta', 'Sin permanencia'].map((t) => (
-            <div key={t} className="bg-[#F3EFE6] border border-[#E5DFD3] rounded-2xl py-4 px-2">
-              <p className="text-xs sm:text-sm font-bold text-[#111827]">{t}</p>
-            </div>
-          ))}
+        <div className="bg-white border border-[#E7E5E4] rounded-3xl p-6 sm:p-10 shadow-sm">
+          <ProtoForm defaultPack={defaultPack} defaultSector={defaultSector} waitlist={waitlist} defaultMessage={defaultMessage} />
         </div>
       </div>
+
+      {!waitlist && (
+        <Section className="!px-0">
+          <Container size="md">
+            <h2 className="font-heading text-2xl font-extrabold text-[#111827] mb-6 text-center">Qué pasa después de enviar la solicitud</h2>
+            <ol className="grid sm:grid-cols-2 gap-4 mb-14">
+              {steps.map((s) => (
+                <li key={s.n} className="flex gap-4 bg-white border border-[#E7E5E4] rounded-2xl p-5">
+                  <span className="font-heading text-3xl font-black text-[#E5DFD3] leading-none">{s.n}</span>
+                  <div>
+                    <p className="font-bold text-[#111827] mb-1">{s.t}</p>
+                    <p className="text-sm text-[#78716C] leading-relaxed">{s.d}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <h2 className="font-heading text-2xl font-extrabold text-[#111827] mb-5 text-center">Preguntas sobre el pedido</h2>
+            <FaqList faqs={faqCompra} />
+          </Container>
+        </Section>
+      )}
     </div>
   )
 }

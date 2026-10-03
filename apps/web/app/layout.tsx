@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Geist } from 'next/font/google'
 import { AuthProvider } from '@/contexts/AuthContext'
+import JsonLd from '@/components/JsonLd'
+import { SITE_NAME, SITE_TAGLINE, SITE_URL, absoluteUrl } from '@/lib/site'
 import './globals.css'
 
 const inter = Inter({
@@ -15,22 +17,17 @@ const geist = Geist({
   display: 'swap',
 })
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://standurl.webadir.es'
+const siteUrl = SITE_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'StandUrl — Objetos NFC para reseñas de Google',
-    template: '%s | StandUrl',
+    default: `${SITE_NAME}: ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
   },
   description:
-    'Objeto 3D personalizado para tu negocio con NFC + QR. Tus clientes dejan reseñas en Google con un solo toque. Sin apps, sin fricción.',
-  keywords: [
-    'tarjeta nfc reseñas google personalizada',
-    'objeto 3d reseñas google',
-    'dispositivo nfc reseñas negocio',
-    'aumentar reseñas google negocio local',
-  ],
+    'Objeto de diseño con NFC y QR para que tus clientes dejen su reseña en Google con un toque. Cambia el destino cuando quieras. Pruébalo 30 días.',
+  applicationName: SITE_NAME,
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -46,14 +43,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_ES',
     url: siteUrl,
-    siteName: 'StandUrl',
-    title: 'StandUrl — Objetos NFC para reseñas de Google',
+    siteName: SITE_NAME,
+    title: `${SITE_NAME}: ${SITE_TAGLINE}`,
     description:
-      'Objeto 3D personalizado para tu negocio con NFC + QR. Reseñas de Google con un toque.',
+      'Objeto de diseño con NFC y QR para que tus clientes dejen su reseña en Google con un toque. Pruébalo 30 días.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'StandUrl — Objetos NFC para reseñas de Google',
+    title: `${SITE_NAME}: ${SITE_TAGLINE}`,
   },
   robots: {
     index: true,
@@ -61,6 +58,26 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true },
   },
 }
+
+const siteLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE_NAME,
+    url: absoluteUrl('/'),
+    logo: absoluteUrl('/icon-512.png'),
+    description: 'Objetos con NFC y QR impresos en 3D para que los clientes de un negocio dejen reseñas en Google.',
+    address: { '@type': 'PostalAddress', addressLocality: 'Albacete', addressCountry: 'ES' },
+    areaServed: 'ES',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: absoluteUrl('/'),
+    inLanguage: 'es-ES',
+  },
+]
 
 export const viewport: Viewport = {
   themeColor: '#FBFBF9',
@@ -75,6 +92,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning className={`${inter.variable} ${geist.variable}`}>
       <body className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] antialiased">
+        <JsonLd data={siteLd} />
         <AuthProvider>
           {children}
         </AuthProvider>

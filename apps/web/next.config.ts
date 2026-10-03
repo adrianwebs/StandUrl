@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  async redirects() {
+    return [
+      // El prototipo gratis se sustituyó por la prueba de 30 días.
+      { source: '/prototipo-gratis', destination: '/prueba-30-dias', permanent: true },
+    ]
+  },
   async rewrites() {
     return [
       {
