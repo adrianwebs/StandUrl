@@ -272,3 +272,40 @@ Regla: ningún enlace con anchor "haz clic aquí". La home no enlaza a `/t/`.
 - Búsqueda "tarjeta nfc": intención de comprar tarjetas baratas; si la guía no convence, rebotará.
 - Marca nueva sin reseñas ni enlaces: priorizar la primera ficha de Google y el prototipo gratis.
 - Cumplimiento de la política de reseñas de Google: revisar cada texto antes de publicar.
+
+---
+
+## 10. Propuesta de envío y plazos (PENDIENTE DE APROBACIÓN)
+
+> Propuesta basada en tarifas públicas de 2026 y en lo que se ve en el mercado. **Las tarifas públicas son de referencia; con contrato (Correos Online, Packlink PRO, GLS/SEUR) se suele pagar menos.** Falta el **peso real** del paquete.
+
+**Referencias de coste (públicas, 2026):**
+- Correos Paq Ligero hasta 250 g: desde 6,06 € · hasta 2 kg: 12,64 € · Paq Estándar hasta 2 kg: 17,10 €.
+- SEUR Shop2Shop (punto a punto): desde 5,40 € + IVA.
+- Fuentes: [ShippyPro](https://www.shippypro.com/blog/es/precios-de-envíos-de-paquetes-en-2026), [Packlink](https://www.packlink.com/gl-ES/enviar-paquetes-pequenos/).
+- En la competencia vista: envío gratis desde cierto importe (un comercio, 50 €; otro, gratis desde 3 tarjetas) y entrega en unas 48 h cuando hay stock.
+
+**Propuesta de condiciones (solo península y Baleares al inicio; Canarias, Ceuta y Melilla fuera por aduanas y coste):**
+
+| Producto | Envío al cliente | Coste real estimado (a tu cargo) |
+|---|---|---|
+| Prototipo gratis (1 ud) | **Gratis** (coste de captación) | ~6 € |
+| Starter 29,90 € (1 ud) | 4,90 € | ~6 € |
+| Pro 49,90 € (2 uds) | **Gratis** | ~8–12 € |
+| Business 79,90 € (4 uds) | **Gratis** | ~10–13 € |
+| Entrega en mano en Albacete | Gratis | 0 € |
+| Baleares | +5 € sobre la tarifa anterior | según tarifa |
+
+Regla comunicable: **"Envío gratis desde 49,90 €"**.
+
+**Plazos propuestos (días laborables):**
+- Modelo de catálogo con stock: preparación 1–2 días + transporte 24–72 h → **entrega en 2–5 días**.
+- Modelo de catálogo sin stock (impresión bajo pedido): preparación 3–4 días + transporte → **entrega en 4–7 días**.
+- Personalizado con logo: boceto en 2–3 días, validación del cliente, impresión y envío → **7–12 días**.
+- Recomendación operativa: mantener 5–10 unidades de la pesa en stock para cumplir "2–5 días".
+
+**Antes de publicar, confirmar:**
+1. Peso y medidas del paquete (si el objeto con embalaje pasa de 250 g, el coste sube de ~6 € a ~12 €).
+2. Tarifa real con contrato o con el comparador de Packlink (origen Albacete).
+3. Si los precios 29,90/49,90/79,90 € **incluyen IVA** y qué margen queda tras el envío (consultar al gestor).
+4. Si el prototipo gratis se devuelve o se queda el cliente al terminar los 30 días.
