@@ -1,7 +1,7 @@
 # StandUrl — Fase 2: análisis de keywords (primer export)
 
 > Fuente: `Keyword_Stats_2026-10-03` (Google Keyword Planner, España, español; 1 sep 2025 – 31 ago 2026).
-> **Limitación importante:** este export contiene solo las 12 keywords que se introdujeron como semillas (volumen de cada una). No incluye "ideas de palabras clave" relacionadas, así que este análisis es **parcial**. Ver sección 6.
+> **Limitación importante:** Google devolvió muy pocas ideas relacionadas (las variantes de "qr reseñas google"); la mayoría de las semillas no tienen volumen. El análisis es **parcial**. Ver secciones 6 y 8 (el segundo export de la misma fecha corrige parte de las conclusiones).
 
 ## 1. Datos en bruto
 
@@ -84,3 +84,36 @@ Pega estas semillas **en la caja de ideas** (no en "Obtener volumen"), España, 
 - **Compra**: `comprar soporte nfc reseñas google`, `precio tarjeta nfc reseñas`, `comprar qr reseñas google`
 - **Sector**: `qr reseñas google gimnasio`, `qr reseñas google peluquería`, `qr reseñas google barbería`, `qr reseñas google restaurante`, `reseñas google gimnasio`, `reseñas google peluquería`, `reseñas google restaurante`
 - **Problema** (servirá para contenido informativo posterior): `cómo conseguir reseñas en google`, `cómo pedir reseñas en google`, `aumentar reseñas google negocio`, `enlace directo reseña google`, `conseguir reseñas google gimnasio`
+
+## 8. Actualización: segundo export (`Keyword_Stats_…03_15_03`)
+
+El primer archivo de la tanda era idéntico al anterior. El segundo añade **un dato nuevo y muy relevante**:
+
+| Keyword | Media/mes | 3 meses | Interanual | Puja pág. 1 | Evolución mensual (sep 25 → ago 26) |
+|---|---|---|---|---|---|
+| **tarjeta nfc reseñas google** | **260** | **+2.011 %** | **+6.233 %** | **0,04–0,13 €** | 140, 70, 30, 40, 70, 30, 70, 70, 40, 90, 260, **1.900** |
+
+Sin datos (volumen insignificante o nulo): `soporte qr reseñas google`, `placa nfc negocio`, `reseñas google gimnasio`, `reseñas google peluquería`, `reseñas google restaurante`, `conseguir reseñas google negocio`.
+
+Cómo cambia el análisis:
+
+1. **El NFC es ahora el motor de crecimiento, no el QR.** En agosto de 2026: *tarjeta nfc reseñas google* 1.900 + *reseñas google nfc* 170 = ~2.070 búsquedas/mes, frente a ~210 de `qr reseñas google`, que es estable. Esto **corrige** la conclusión anterior de que el QR era la demanda principal.
+2. **La media de 260 engaña**: la media anual esconde el salto de julio–agosto. Hay que comprobar en Google Trends (gratis, España, 12 meses) si es una tendencia sostenida o un pico puntual antes de apostar todo a ella.
+3. **Puja de 0,04–0,13 €**: casi nadie anuncia esta keyword, por lo que la competencia comercial es baja pese a la etiqueta "Alta" del planificador. Es una oportunidad orgánica.
+4. **Desajuste de intención a gestionar**: quien busca "tarjeta" quiere una tarjeta de PVC barata. StandUrl vende un objeto de diseño. La home debe captar esta búsqueda con una sección clara que explique "no es una tarjeta, es un objeto que queda en el mostrador" y por qué.
+
+Clusters actualizados:
+
+| Cluster | Keyword principal | Keywords | Búsquedas/mes (media) |
+|---|---|---|---|
+| A. QR de reseñas | qr reseñas google | qr reseñas google 260, qr para reseñas de google 110, código qr reseñas google 40, código qr para reseñas google 30 | 440 |
+| **B1. Tarjeta NFC de reseñas** | **tarjeta nfc reseñas google** | tarjeta nfc reseñas google 260 | **260 (ago: 1.900)** |
+| B2. NFC de reseñas (genérico) | reseñas google nfc | reseñas google nfc 50 | 50 (ago: 170) |
+| C. Soporte/placa/sector | — | sin datos | — |
+| D. Generador QR gratis (descartado) | — | generar…, crear… | 40 |
+
+Asignación: la **home** recibe A, B1 y B2. B1 y B2 son búsquedas distintas (producto-formato frente a tecnología), pero una sola página las cubre sin canibalizarse porque el producto es el mismo. No se crea página separada para "tarjeta" porque StandUrl no vende tarjetas.
+
+Variantes con diferencia semántica real (ahora tres ejes): tecnología (QR frente a NFC), formato de producto (tarjeta frente a genérico) y fabricar frente a comprar hecho.
+
+Pendiente: la tanda de semillas "problema" (`cómo conseguir reseñas en google`, `pedir reseñas google clientes`, `aumentar reseñas google`) no está en los exports. Es donde estará el volumen informativo y el mejor material para contenido de apoyo.
