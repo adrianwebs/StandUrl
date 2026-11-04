@@ -9,24 +9,23 @@ import { ArrowLeft, KeyRound, Mail, AlertCircle, Loader2 } from 'lucide-react'
 import Logo from '@/components/Logo'
 
 function ClientLoginForm() {
-  const { login, isAuthenticated, isAdmin, isBusiness, isLoading } = useAuth()
+  const { login, logout, name, isAuthenticated, isAdmin, isBusiness, isLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const from = searchParams.get('from') || '/dashboard'
+  const rawFrom = searchParams.get('from')
+  // Solo rutas internas: evita redirecciones abiertas tipo ?from=//otro-sitio.com
+  const from = rawFrom && rawFrom.startsWith('/') && !rawFrom.startsWith('//') ? rawFrom : '/dashboard'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  // Si ya está autenticado, redirigir adecuadamente
+  // Si ya hay sesión de cliente, ir directo al panel. Una sesión de admin NO
+  // redirige: este es el acceso de clientes y se debe poder entrar con otra cuenta.
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      if (isAdmin) {
-        router.replace('/admin')
-      } else {
-        router.replace(from)
-      }
+    if (!isLoading && isAuthenticated && isBusiness && !isAdmin) {
+      router.replace(from)
     }
   }, [isLoading, isAuthenticated, isAdmin, isBusiness, router, from])
 
@@ -95,6 +94,23 @@ function ClientLoginForm() {
           onSubmit={handleSubmit}
           className="bg-white border border-[#E7E5E4] rounded-3xl p-7 sm:p-8 space-y-5 shadow-xl"
         >
+          {isAdmin && (
+            <div className="bg-[#F3EFE6] border border-[#E5DFD3] text-[#111827] text-xs px-4 py-3 rounded-xl space-y-1.5">
+              <p>
+                Tienes abierta la sesión de administrador{name ? ` (${name})` : ''}. Entra con una cuenta de
+                cliente para acceder al portal.
+              </p>
+              <div className="flex gap-3 font-bold">
+                <Link href="/admin" className="text-[#B45309] hover:underline">
+                  Ir al panel admin
+                </Link>
+                <button type="button" onClick={logout} className="text-[#78716C] hover:text-[#111827]">
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
+          )}
+
           {error && (
             <div className="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
               <AlertCircle size={18} className="shrink-0 mt-0.5 text-red-600" />
