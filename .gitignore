@@ -43,3 +43,4 @@ logs/
 # Coverage
 coverage/
 *.lcov
+apps/api/StandUrl.Api/data/

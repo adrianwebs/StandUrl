@@ -62,6 +62,23 @@ dotnet run
 La cadena de conexión de desarrollo se lee de `appsettings.Development.json`,
 que no se incluye en la imagen (se monta como volumen).
 
+## Envíos con seguimiento de descarga
+
+Desde el portal (`/dashboard` → *Envíos con seguimiento*) el negocio sube un fichero y crea
+un enlace personal por destinatario para pegarlo en un correo:
+
+```
+https://standurl.com/d/{TOKEN}   GET  → página con botón "Descargar"  (cuenta como abierto)
+                                 POST → entrega el fichero          (cuenta como descargado)
+```
+
+- Un enlace por persona: así se sabe **quién** descarga y **cuándo** (historial por enlace).
+- La descarga va por POST para que los antivirus de correo, que abren los enlaces con GET
+  antes que la persona, no cuenten como descargas.
+- La primera descarga de cada destinatario envía un aviso por email al negocio.
+- Los ficheros se guardan en disco (`Storage:FilesPath`, volumen `standurl-files` en
+  producción). Tamaño máximo `Storage:MaxFileMb` (25 MB por defecto).
+
 ## Tests
 
 ```bash

@@ -42,3 +42,10 @@ public record ChangePasswordRequest(
     string CurrentPassword,
     string NewPassword
 );
+
+// ── Ficheros compartidos ──────────────────────────────────────────────────────
+
+public record CreateFileLinkRequest(
+    string RecipientName,
+    string? RecipientEmail = null
+);

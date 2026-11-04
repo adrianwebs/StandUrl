@@ -60,6 +60,11 @@ services:
       - Smtp__FromEmail=${SMTP_FROM_EMAIL:-adrian@webadir.es}
       - Smtp__FromName=${SMTP_FROM_NAME:-StandUrl}
       - Smtp__NotificationEmail=${NOTIFICATION_EMAIL:-dev@standurl.com}
+      - App__SiteUrl=https://${DOMAIN}
+      - Storage__FilesPath=/app/data/files
+      - Storage__MaxFileMb=${MAX_FILE_MB:-25}
+    volumes:
+      - standurl-files:/app/data/files
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.standurl-api.rule=Host(`${API_DOMAIN}`)"
@@ -86,6 +91,7 @@ services:
 
 volumes:
   redis-data:
+  standurl-files:
 
 networks:
   proxy:

@@ -29,6 +29,10 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
 
 # Usuario no-root por seguridad
 RUN addgroup -g 1001 -S appgroup && adduser -u 1001 -S appuser -G appgroup
+
+# Ficheros compartidos (enlaces de descarga). Montar un volumen aquí en producción.
+RUN mkdir -p /app/data/files && chown -R appuser:appgroup /app/data
+ENV Storage__FilesPath=/app/data/files
 USER appuser
 
 COPY --from=build --chown=appuser:appgroup /app/publish .

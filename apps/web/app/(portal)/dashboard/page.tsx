@@ -32,6 +32,7 @@ import {
   Flame,
 } from 'lucide-react'
 import { DeviceQrModal } from '@/components/DeviceQrModal'
+import { FileSharesSection } from '@/components/portal/FileSharesSection'
 
 import Logo from '@/components/Logo'
 
@@ -635,6 +636,9 @@ export default function ClientDashboardPage() {
             </div>
           )}
         </section>
+
+        {/* Envíos de ficheros con seguimiento de descarga */}
+        <FileSharesSection businessName={business?.name || name || ''} />
 
         {/* Guía práctica para el cliente */}
         <section className="bg-[#F3EFE6]/70 border border-[#E5DFD3] rounded-3xl p-6 space-y-3 shadow-xs">

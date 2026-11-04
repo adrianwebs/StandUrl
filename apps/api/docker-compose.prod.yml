@@ -27,6 +27,13 @@ services:
       Smtp__FromName: ${SMTP_FROM_NAME:-StandUrl}
       Smtp__NotificationEmail: ${NOTIFICATION_EMAIL:-dev@standurl.com}
 
+      App__SiteUrl: https://${DOMAIN:-standurl.webadir.es}
+      Storage__FilesPath: /app/data/files
+      Storage__MaxFileMb: ${MAX_FILE_MB:-25}
+
+    volumes:
+      - standurl-files:/app/data/files
+
     networks:
       - proxy
       - standurl-api-internal
@@ -63,6 +70,7 @@ services:
 
 volumes:
   redis-data:
+  standurl-files:
 
 networks:
   proxy:

@@ -14,4 +14,5 @@ public class Business
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Device> Devices { get; set; } = [];
+    public ICollection<SharedFile> SharedFiles { get; set; } = [];
 }
