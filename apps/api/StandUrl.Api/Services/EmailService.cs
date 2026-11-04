@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.RegularExpressions;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -11,6 +12,8 @@ public interface IEmailService
     Task SendProtoRequestNotificationAsync(string businessName, string sector,
         string city, string contact, string? googleMapsUrl);
     Task SendWelcomeEmailAsync(string businessName, string email, string tempPassword, bool isResend = false);
+    Task SendFileDownloadedNotificationAsync(string toEmail, string businessName, string recipientName,
+        string? recipientEmail, string fileName, DateTime downloadedAtUtc);
 }
 
 public class EmailService(IConfiguration config, ILogger<EmailService> logger) : IEmailService
@@ -182,6 +185,71 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
             """;
 
         await SendEmailAsync(email, subject, html, textBody);
+    }
+
+    public async Task SendFileDownloadedNotificationAsync(string toEmail, string businessName,
+        string recipientName, string? recipientEmail, string fileName, DateTime downloadedAtUtc)
+    {
+        var when = FormatMadrid(downloadedAtUtc);
+        var who = string.IsNullOrWhiteSpace(recipientEmail) ? recipientName : $"{recipientName} ({recipientEmail})";
+
+        if (string.IsNullOrWhiteSpace(_smtpHost) || _smtpHost.StartsWith("#{"))
+        {
+            logger.LogInformation("[DEV] Descarga: {Who} ha descargado {File} ({When}) → aviso a {To}",
+                who, fileName, when, toEmail);
+            return;
+        }
+
+        var panelUrl = $"{_siteUrl.TrimEnd('/')}/dashboard";
+        var subject = $"{recipientName} ha descargado «{fileName}»";
+
+        var textBody = $"""
+            Hola {businessName},
+
+            {who} acaba de descargar el fichero «{fileName}».
+            Fecha: {when}
+
+            Puedes ver quién ha abierto o descargado cada enlace desde tu panel:
+            {panelUrl}
+
+            © {DateTime.UtcNow.Year} StandUrl
+            """;
+
+        Func<string?, string?> e = WebUtility.HtmlEncode;
+        var html = $"""
+            <!DOCTYPE html>
+            <html lang="es">
+            <head><meta charset="utf-8"><title>{e(subject)}</title></head>
+            <body style="margin:0;padding:20px;background:#FBFBF9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#111827;">
+              <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid #E7E5E4;border-radius:16px;padding:28px;">
+                <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#B45309;margin-bottom:8px;">Descarga confirmada</div>
+                <h1 style="font-size:20px;margin:0 0 12px;line-height:1.3;">{e(recipientName)} ha descargado tu fichero</h1>
+                <table style="width:100%;border-collapse:collapse;font-size:14px;margin:16px 0;">
+                  <tr><td style="padding:8px 0;color:#78716C;width:110px;">Fichero</td><td style="font-weight:600;">{e(fileName)}</td></tr>
+                  <tr><td style="padding:8px 0;color:#78716C;">Destinatario</td><td>{e(who)}</td></tr>
+                  <tr><td style="padding:8px 0;color:#78716C;">Fecha</td><td>{e(when)}</td></tr>
+                </table>
+                <a href="{panelUrl}" style="display:inline-block;background:#18181B;color:#FFFFFF;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px;">Ver seguimiento en el panel →</a>
+                <p style="font-size:12px;color:#A8A29E;margin:24px 0 0;">Solo te avisamos de la primera descarga de cada destinatario.</p>
+              </div>
+            </body>
+            </html>
+            """;
+
+        await SendEmailAsync(toEmail, subject, html, textBody);
+    }
+
+    private static string FormatMadrid(DateTime utc)
+    {
+        try
+        {
+            var tz = TimeZoneInfo.FindSystemTimeZoneById("Europe/Madrid");
+            return TimeZoneInfo.ConvertTimeFromUtc(utc, tz).ToString("dd/MM/yyyy HH:mm") + " (hora de Madrid)";
+        }
+        catch
+        {
+            return utc.ToString("dd/MM/yyyy HH:mm") + " UTC";
+        }
     }
 
     private async Task SendEmailAsync(string toEmail, string subject, string htmlBody, string? textBody = null)

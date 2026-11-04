@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
         source: '/t/:path*',
         destination: `${apiUrl}/t/:path*`,
       },
+      {
+        // Enlaces de descarga con seguimiento (página + fichero los sirve la API)
+        source: '/d/:path*',
+        destination: `${apiUrl}/d/:path*`,
+      },
     ]
   },
 }

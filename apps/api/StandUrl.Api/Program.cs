@@ -37,6 +37,8 @@ builder.Services.AddSingleton<IRedisService, RedisService>();
 builder.Services.AddScoped<IInteractionService, InteractionService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddSingleton<IFileTrackingService, FileTrackingService>();
 
 // ── JWT Authentication ───────────────────────────────────────────────────────
 var jwtSecret = builder.Configuration["Jwt:Secret"]
@@ -145,6 +147,8 @@ app.MapBusinessEndpoints();
 app.MapDeviceEndpoints();
 app.MapProtoRequestEndpoints();
 app.MapAdminEndpoints();
+app.MapFileEndpoints();
+app.MapDownloadEndpoints();
 
 app.Run();
 

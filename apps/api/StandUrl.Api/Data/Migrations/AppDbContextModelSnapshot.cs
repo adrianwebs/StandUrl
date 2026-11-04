@@ -161,6 +161,91 @@ namespace StandUrl.Api.Data.Migrations
                     b.ToTable("Devices");
                 });
 
+            modelBuilder.Entity("StandUrl.Api.Data.Entities.FileLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DownloadCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("FirstDownloadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstOpenedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("LastDownloadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OpenCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RecipientEmail")
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<string>("RecipientName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<Guid>("SharedFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nchar(8)")
+                        .IsFixedLength();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SharedFileId");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("FileLinks");
+                });
+
+            modelBuilder.Entity("StandUrl.Api.Data.Entities.FileLinkEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FileLinkId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileLinkId");
+
+                    b.ToTable("FileLinkEvents");
+                });
+
             modelBuilder.Entity("StandUrl.Api.Data.Entities.Interaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -192,6 +277,43 @@ namespace StandUrl.Api.Data.Migrations
                     b.ToTable("Interactions");
                 });
 
+            modelBuilder.Entity("StandUrl.Api.Data.Entities.SharedFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(127)
+                        .HasColumnType("nvarchar(127)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OriginalName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StoredName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.ToTable("SharedFiles");
+                });
+
             modelBuilder.Entity("StandUrl.Api.Data.Entities.DestinationHistory", b =>
                 {
                     b.HasOne("StandUrl.Api.Data.Entities.Device", "Device")
@@ -214,6 +336,28 @@ namespace StandUrl.Api.Data.Migrations
                     b.Navigation("Business");
                 });
 
+            modelBuilder.Entity("StandUrl.Api.Data.Entities.FileLink", b =>
+                {
+                    b.HasOne("StandUrl.Api.Data.Entities.SharedFile", "SharedFile")
+                        .WithMany("Links")
+                        .HasForeignKey("SharedFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SharedFile");
+                });
+
+            modelBuilder.Entity("StandUrl.Api.Data.Entities.FileLinkEvent", b =>
+                {
+                    b.HasOne("StandUrl.Api.Data.Entities.FileLink", "FileLink")
+                        .WithMany("Events")
+                        .HasForeignKey("FileLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FileLink");
+                });
+
             modelBuilder.Entity("StandUrl.Api.Data.Entities.Interaction", b =>
                 {
                     b.HasOne("StandUrl.Api.Data.Entities.Device", "Device")
@@ -225,9 +369,22 @@ namespace StandUrl.Api.Data.Migrations
                     b.Navigation("Device");
                 });
 
+            modelBuilder.Entity("StandUrl.Api.Data.Entities.SharedFile", b =>
+                {
+                    b.HasOne("StandUrl.Api.Data.Entities.Business", "Business")
+                        .WithMany("SharedFiles")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
             modelBuilder.Entity("StandUrl.Api.Data.Entities.Business", b =>
                 {
                     b.Navigation("Devices");
+
+                    b.Navigation("SharedFiles");
                 });
 
             modelBuilder.Entity("StandUrl.Api.Data.Entities.Device", b =>
@@ -235,6 +392,16 @@ namespace StandUrl.Api.Data.Migrations
                     b.Navigation("History");
 
                     b.Navigation("Interactions");
+                });
+
+            modelBuilder.Entity("StandUrl.Api.Data.Entities.FileLink", b =>
+                {
+                    b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("StandUrl.Api.Data.Entities.SharedFile", b =>
+                {
+                    b.Navigation("Links");
                 });
 #pragma warning restore 612, 618
         }

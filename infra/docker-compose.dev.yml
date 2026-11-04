@@ -41,6 +41,7 @@ services:
       - Redis__ConnectionString=redis-dev:6379
     volumes:
       - ../apps/api/StandUrl.Api/appsettings.Development.json:/app/appsettings.Development.json:ro
+      - standurl-files-dev:/app/data/files
     networks:
       - standurl-dev-net
     depends_on:
@@ -54,6 +55,9 @@ services:
     command: redis-server --save "" --appendonly no
     networks:
       - standurl-dev-net
+
+volumes:
+  standurl-files-dev:
 
 networks:
   standurl-dev-net:
