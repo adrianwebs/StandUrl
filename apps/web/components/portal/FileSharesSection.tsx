@@ -8,6 +8,7 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  ClipboardCopy,
   CircleDashed,
   Copy,
   Download,
@@ -46,6 +47,63 @@ function mailtoHref(link: FileLink, fileName: string, businessName: string) {
     `${linkUrl(link.token)}\n\n` +
     `Cualquier duda, responde a este correo.\n\nUn saludo,\n${businessName}`
   return `mailto:${encodeURIComponent(link.recipientEmail ?? '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+}
+
+function escapeHtml(text: string) {
+  return text.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
+}
+
+function fileKind(name: string) {
+  const ext = name.includes('.') ? name.split('.').pop()!.toUpperCase() : ''
+  return ext && ext.length <= 5 ? ext : 'Fichero'
+}
+
+/**
+ * Bloque para pegar en el correo: un botón con el nombre del fichero en vez de la URL en crudo.
+ * Va en una tabla con estilos en línea porque es lo único que respetan Gmail, Outlook y Apple Mail
+ * al pegar (Outlook ignora el padding de los <a>).
+ */
+function emailSnippet(file: SharedFile, link: FileLink) {
+  const url = linkUrl(link.token)
+  const label = `Descargar ${file.originalName}`
+  const meta = `${fileKind(file.originalName)} · ${formatSize(file.sizeBytes)}`
+  const html =
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin:8px 0;">` +
+    `<tr><td bgcolor="#18181B" style="background:#18181B;border-radius:8px;">` +
+    `<a href="${escapeHtml(url)}" target="_blank" style="display:inline-block;padding:12px 22px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:8px;">` +
+    `&#11015;&#65039; ${escapeHtml(label)}</a></td></tr>` +
+    `<tr><td style="padding-top:6px;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#78716C;">${escapeHtml(meta)}</td></tr>` +
+    `</table>`
+  // Texto plano para clientes que no aceptan formato: al menos lleva una frase delante de la URL
+  const text = `${label} (${meta}):\n${url}`
+  return { html, text }
+}
+
+async function copyRich(html: string, text: string) {
+  if (typeof ClipboardItem !== 'undefined' && navigator.clipboard?.write) {
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        'text/html': new Blob([html], { type: 'text/html' }),
+        'text/plain': new Blob([text], { type: 'text/plain' }),
+      }),
+    ])
+    return
+  }
+  // Navegadores sin ClipboardItem (Firefox antiguo): copiar una selección con formato
+  const container = document.createElement('div')
+  container.innerHTML = html
+  container.style.position = 'fixed'
+  container.style.left = '-9999px'
+  document.body.appendChild(container)
+  const range = document.createRange()
+  range.selectNodeContents(container)
+  const selection = window.getSelection()
+  selection?.removeAllRanges()
+  selection?.addRange(range)
+  const ok = document.execCommand('copy')
+  selection?.removeAllRanges()
+  container.remove()
+  if (!ok) throw new Error('copy failed')
 }
 
 function LinkStatus({ link }: { link: FileLink }) {
@@ -90,6 +148,7 @@ function LinkRow({
 }) {
   const { token } = useAuth()
   const [copied, setCopied] = useState(false)
+  const [copiedEmail, setCopiedEmail] = useState<'ok' | 'error' | null>(null)
   const [showHistory, setShowHistory] = useState(false)
   const [events, setEvents] = useState<FileLinkEvent[] | null>(null)
   const [busy, setBusy] = useState(false)
@@ -98,6 +157,17 @@ function LinkRow({
     navigator.clipboard.writeText(linkUrl(link.token))
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  async function copyForEmail() {
+    const { html, text } = emailSnippet(file, link)
+    try {
+      await copyRich(html, text)
+      setCopiedEmail('ok')
+    } catch {
+      setCopiedEmail('error')
+    }
+    setTimeout(() => setCopiedEmail(null), 4000)
   }
 
   async function toggleHistory() {
@@ -136,7 +206,15 @@ function LinkRow({
           )}
         </div>
 
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex flex-wrap items-center gap-1 shrink-0">
+          <button
+            onClick={copyForEmail}
+            className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#18181B] hover:bg-[#27272A] px-2.5 py-1.5 rounded-lg transition-colors"
+            title="Copia un botón «Descargar …» para pegarlo en tu correo, en vez del enlace en crudo"
+          >
+            {copiedEmail === 'ok' ? <Check size={12} /> : <ClipboardCopy size={12} />}
+            {copiedEmail === 'ok' ? 'Copiado' : 'Copiar para el correo'}
+          </button>
           {link.recipientEmail && (
             <a
               href={mailtoHref(link, file.originalName, businessName)}
@@ -172,6 +250,17 @@ function LinkRow({
           </button>
         </div>
       </div>
+
+      {copiedEmail === 'ok' && (
+        <p className="mt-2 text-xs text-green-700 font-medium">
+          Listo: pégalo en el cuerpo de tu correo (Ctrl+V / ⌘+V) y aparecerá como un botón de descarga.
+        </p>
+      )}
+      {copiedEmail === 'error' && (
+        <p className="mt-2 text-xs text-red-600 font-medium">
+          Tu navegador no permite copiar con formato. Usa «Copiar enlace» y enlázalo a un texto en tu correo.
+        </p>
+      )}
 
       {showHistory && (
         <div className="mt-2 bg-[#FBFBF9] border border-[#E7E5E4] rounded-xl px-3 py-2 text-xs text-[#78716C]">
